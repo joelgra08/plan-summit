@@ -60,6 +60,12 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 .order .none{color:var(--muted)}
 .notes{display:grid;gap:6px;color:var(--muted);font-size:14px;margin:0;padding-left:18px;max-width:80ch}
 @media (max-width:760px){.day{grid-template-columns:1fr}.day figure{border-right:none;border-bottom:1px solid var(--line)}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.vbar .hint{margin-left:0;width:100%}}
+.objbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.objbar button{font:600 14px var(--body);color:#fff;background:#142d20;border:1px solid #142d20;border-radius:6px;padding:10px 16px;cursor:pointer}
+.objbar button.alt{background:transparent;color:var(--fg);border-color:var(--line)}
+.objbar button:focus-visible{outline:2px solid var(--pour);outline-offset:2px}
+.objbar button:disabled{opacity:.6;cursor:progress}
+.objbar .msg{font-size:13px;color:var(--muted)}
 .topbar{background:#142d20;color:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .topbar img{width:26px;height:26px;border-radius:6px;display:block}
 .topbar .tt{font-family:var(--body);font-size:16px;font-weight:600;margin:0;white-space:nowrap}
@@ -84,6 +90,11 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 </header>
 <div class="facts">
 <div id="facts" style="display:contents"></div>
+</div>
+<div class="objbar">
+  <button type="button" id="btnObjHoy">Descargar objetivos hoy</button>
+  <button type="button" id="btnObjManana" class="alt">Descargar objetivos de mañana</button>
+  <span class="msg" id="objMsg">Imagen lista para mandar por WhatsApp</span>
 </div>
 
 <section class="viewer" aria-label="Vista 3D por día">
@@ -313,6 +324,83 @@ function main(){
     const loop = () => { draw(); requestAnimationFrame(loop); }; loop(); }
   else show(start);
 }
+
+// ---------- Imagen de objetivos para WhatsApp ----------
+function objWrap(ctx, text, maxW){
+  const words = text.split(" "); const lines = []; let line = "";
+  for (const w of words){ const tryL = line ? line + " " + w : w; if (ctx.measureText(tryL).width > maxW && line){ lines.push(line); line = w; } else line = tryL; }
+  if (line) lines.push(line); return lines;
+}
+async function objImagen(day, titulo){
+  try { await document.fonts.ready; } catch (e) {}
+  const W = 1080, P = 56;
+  let shot = null;
+  if (window.THREE && renderer) {
+    homeCam(); setDay(day); renderer.setSize(1080, 700, false); camera.aspect = 1080/700; camera.updateProjectionMatrix(); renderer.render(scene, camera);
+    shot = await new Promise(r => { const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = renderer.domElement.toDataURL("image/png"); });
+    const st = document.getElementById("stage"); renderer.setSize(st.clientWidth, st.clientHeight, false); camera.aspect = st.clientWidth/st.clientHeight; camera.updateProjectionMatrix();
+  }
+  // medir alto
+  const meas = document.createElement("canvas").getContext("2d");
+  meas.font = "500 34px 'IBM Plex Sans', system-ui, sans-serif";
+  const chipW = 210, textW = W - 2*P - chipW - 20;
+  const items = day.tasks.map(([k, txt]) => ({k, lines: objWrap(meas, txt, textW)}));
+  const tasksH = items.reduce((a, it) => a + it.lines.length * 46 + 22, 0);
+  const ords = [day.o45 ? `C45 · ${fnum(day.o45)} m³ · grúa` : "", day.o35 ? `C35 · ${fnum(day.o35)} m³ · bomba` : ""].filter(Boolean);
+  const H = 120 + 190 + (shot ? 700 : 0) + 70 + tasksH + 60 + 70 + Math.max(1, ords.length) * 50 + 110;
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  const col = { pour:"#e0522b", form:"#c99a5b", steel:"#4f6fae", done:"#8f9791" };
+  x.fillStyle = "#f4f5f1"; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#142d20"; x.fillRect(0, 0, W, 120);
+  x.fillStyle = "#fff"; x.font = "600 40px 'IBM Plex Sans', system-ui, sans-serif"; x.textBaseline = "middle";
+  x.fillText("Plan de llenado Summit", P, 60);
+  let y = 120 + 70;
+  x.textBaseline = "alphabetic";
+  x.fillStyle = "#646e68"; x.font = "500 30px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText(titulo.toUpperCase(), P, y);
+  y += 78; x.fillStyle = "#1e2622"; x.font = "800 72px Archivo, system-ui, sans-serif"; x.fillText(fdate(day.d) + "/" + day.d.slice(2,4), P, y);
+  y += 42;
+  if (shot) { x.drawImage(shot, 0, y, 1080, 700); y += 700; }
+  y += 30; x.fillStyle = "#1e2622"; x.font = "700 38px Archivo, system-ui, sans-serif"; x.fillText(day.lvl, P, y); y += 40;
+  x.font = "500 34px 'IBM Plex Sans', system-ui, sans-serif";
+  for (const it of items) {
+    y += 22; x.fillStyle = col[it.k]; x.beginPath(); x.roundRect ? x.roundRect(P, y - 4, chipW, 46, 8) : x.rect(P, y - 4, chipW, 46); x.fill();
+    x.fillStyle = "#fff"; x.font = "600 24px 'IBM Plex Mono', ui-monospace, monospace"; x.textAlign = "center"; x.fillText(TASK_L[it.k].toUpperCase(), P + chipW/2, y + 28); x.textAlign = "left";
+    x.fillStyle = "#1e2622"; x.font = "500 34px 'IBM Plex Sans', system-ui, sans-serif";
+    it.lines.forEach((ln, i) => x.fillText(ln, P + chipW + 20, y + 30 + i * 46)); y += it.lines.length * 46;
+  }
+  y += 40; x.strokeStyle = "#cfd4ce"; x.setLineDash([10, 8]); x.lineWidth = 2; x.beginPath(); x.moveTo(P, y); x.lineTo(W - P, y); x.stroke(); x.setLineDash([]);
+  y += 56; x.fillStyle = "#646e68"; x.font = "500 28px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText("PEDIDO CIELO AZUL", P, y);
+  x.fillStyle = "#1e2622"; x.font = "600 36px 'IBM Plex Sans', system-ui, sans-serif";
+  if (!ords.length) { y += 50; x.fillStyle = "#646e68"; x.fillText("Sin pedido de hormigón", P, y); }
+  ords.forEach(o => { y += 50; x.fillText(o, P, y); });
+  x.fillStyle = "#8a938d"; x.font = "500 26px 'IBM Plex Sans', system-ui, sans-serif"; x.fillText("joelgra08.github.io/plan-summit", P, H - 40);
+  return await new Promise(r => c.toBlob(r, "image/png"));
+}
+async function objDescargar(cual){
+  const msg = document.getElementById("objMsg");
+  const day = cual === "hoy" ? DAYS.find(d => d.d === TODAY) : DAYS.find(d => d.d > TODAY);
+  if (!day) { msg.textContent = cual === "hoy" ? "Hoy no es día de trabajo en el plan." : "No hay más días en el plan."; return; }
+  const btns = document.querySelectorAll(".objbar button"); btns.forEach(b => b.disabled = true); msg.textContent = "Armando la imagen…";
+  try {
+    const man = new Date(); man.setDate(man.getDate() + 1);
+    const titulo = cual === "hoy" ? "Objetivos de hoy" : day.d === iso(man) ? "Objetivos de mañana" : "Objetivos del próximo día de trabajo";
+    const blob = await objImagen(day, titulo);
+    const name = `Objetivos ${day.d.split("-").reverse().join("-")}.png`;
+    const file = new File([blob], name, {type:"image/png"});
+    if (navigator.canShare && navigator.canShare({files:[file]}) && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      await navigator.share({files:[file], title:name});
+      msg.textContent = "Imagen lista para compartir.";
+    } else {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      msg.textContent = `Descargada: ${name}`;
+    }
+  } catch (err) { if (err && err.name !== "AbortError") msg.textContent = "No se pudo armar la imagen en este navegador."; else msg.textContent = "Imagen lista para mandar por WhatsApp"; }
+  btns.forEach(b => b.disabled = false);
+}
+document.getElementById("btnObjHoy").addEventListener("click", () => objDescargar("hoy"));
+document.getElementById("btnObjManana").addEventListener("click", () => objDescargar("manana"));
 main();
 </script>
 
