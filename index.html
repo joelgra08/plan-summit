@@ -140,6 +140,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
   <h2>Supuestos</h2>
   <ul class="notes">
     <li>Se hormigona después de las 17 h, así el mismo día entra encofrado o herrería y a la tarde se llena. Las verticales se desencofran a primera hora del día siguiente y ese mismo día se arma la tanda que sigue.</li>
+    <li>El encofrado vertical de S3 (tandas 3 y 4) no baja a pie de torre: queda armado hasta la mañana siguiente al llenado de la losa S1 de arriba, y ahí se desencofra y sube directo a S1 para la tanda 1.</li>
     <li>Hay dos pisos de losa encofrados y se desencofra siempre el de más abajo (7 a 10 días). El desencofrado de losa se marca en los días con poco o ningún llenado vertical (día 5 del ciclo, el de la losa S1), que son los ideales para recuperar material.</li>
     <li>Con un solo encofrado de 0,22 × 2,00, el jueves 22/10 se llena S3 con E06 y el viernes 23/10 E05 sola (1,2 m³). E06 va antes que E05 porque conviene para tapar la losa.</li>
     <li>Losa por sector: encofrado en 1 día, herrería al día siguiente (S1 y S3: 7 h; S2 con la escalera: 9 h, la hora que falta se termina a primera hora del otro día) y llenado el día después a las 17 h. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
@@ -189,7 +190,7 @@ const DAYS = [
  { d:WDAYS[2], lvl:"Verticales N107 → N108 + losa N108", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"steel",2:"form"},
    tasks:[["steel","Losa N108 S1: entra y termina la herrería (7 h)"],["form","Losa N108 S2: encofrado"],["pour","17 h: verticales de S3: C06, C05, E06, T02 asc. sup., C04, D04A, T04 (E06 antes que E05)"]], o45:18.6, o35:0, what:"Verticales S3 menos E05" },
  { d:WDAYS[3], lvl:"Losa N108 S1", base:{}, vert:{...done(before,HOY,PATA,S3V),...pour(["E05"])}, slab:{1:"pour",2:"steel",3:"form"},
-   tasks:[["rec","Día ideal para desencofrar material de losa"],["steel","Losa N108 S2: entra la herrería (9 h, termina el lunes a primera hora)"],["form","Losa N108 S3: encofrado"],["pour","17 h: llenar losa N108 Sector 1 con bomba y E05 con grúa"]], o45:1.2, o35:51.8, what:"Losa N108 S1 + E05" },
+   tasks:[["rec","Día ideal para desencofrar material de losa"],["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"],["steel","Losa N108 S2: entra la herrería (9 h, termina el lunes a primera hora)"],["form","Losa N108 S3: encofrado"],["pour","17 h: llenar losa N108 Sector 1 con bomba y E05 con grúa"]], o45:1.2, o35:51.8, what:"Losa N108 S1 + E05" },
 ];
 // Ciclo de 5 días hábiles: piso g arranca en WDAYS[4 + 5g] con verticales N(108+g) → N(109+g)
 const FLOORS = [];
@@ -199,7 +200,7 @@ for (let g = 0; 108 + g < LAST; g++) {
   const up = L + 1;
   const O = [
     { base:{2:"pour",3:"steel"}, vert:{...pour(byT(1))}, slab:{},
-      tasks:[["steel",`Losa N${L}: termina la herrería de S2 (1 h); entra y termina la de S3 (7 h)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
+      tasks:[["vert","A primera hora: desencofrar verticales de S3 y subir directo a la losa S1"],["steel",`Losa N${L}: termina la herrería de S2 (1 h); entra y termina la de S3 (7 h)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
     { base:{3:"pour"}, vert:{...done(tandas(2)),...pour(byT(2))}, slab:{},
       tasks:[["pour",`17 h: llenar losa N${L} Sector 3 con bomba`],["pour",`17 h: tanda 2: ${TXT[2]}`]], o45:24.7, o35:45.3, what:`Losa N${L} S3 + tanda 2` },
     { base:{}, vert:{...done(tandas(3)),...pour(byT(3))}, slab:{1:"form"},
@@ -207,7 +208,7 @@ for (let g = 0; 108 + g < LAST; g++) {
     { base:{}, vert:{...done(tandas(4)),...pour(byT(4))}, slab:{1:"steel",2:"form"},
       tasks:[["steel",`Losa N${up} S1: entra y termina la herrería (7 h)`],["form",`Losa N${up} S2: encofrado`],["pour",`17 h: tanda 4: ${TXT[4]}`]], o45:10.5, o35:0, what:"Tanda 4" },
     { base:{}, vert:{...done(ALL)}, slab:{1:"pour",2:"steel",3:"form"},
-      tasks:[["rec","Día ideal para desencofrar material de losa"],["steel",`Losa N${up} S2: entra la herrería (9 h, termina al día siguiente a primera hora)`],["form",`Losa N${up} S3: encofrado`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
+      tasks:[["rec","Día ideal para desencofrar material de losa"],...(up < LAST ? [["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"]] : []),["steel",`Losa N${up} S2: entra la herrería (9 h, termina al día siguiente a primera hora)`],["form",`Losa N${up} S3: encofrado`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
   ];
   O.forEach((o, k) => DAYS.push({ ...o, d:WDAYS[s + k], lvl: k < 2 ? `Losa N${L} + verticales N${L} → N${up}` : k < 4 ? `Verticales N${L} → N${up} · cota ${fcota(NCI(L))} + losa N${up}` : `Losa N${up}` }));
 }
@@ -220,8 +221,8 @@ for (let g = 0; 108 + g < LAST; g++) {
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
 const fnum = n => n ? n.toFixed(1).replace(".", ",") : "—";
-const TASK_C = {pour:"var(--pour)",form:"var(--form)",steel:"var(--steel)",done:"var(--done)",rec:"var(--done)"};
-const TASK_L = {pour:"Llenado",form:"Encofrado",steel:"Hierro",done:"Desencofrar",rec:"Desencofrado"};
+const TASK_C = {pour:"var(--pour)",form:"var(--form)",steel:"var(--steel)",done:"var(--done)",rec:"var(--done)",vert:"#5f7d6c"};
+const TASK_L = {pour:"Llenado",form:"Encofrado",steel:"Hierro",done:"Desencofrar",rec:"Desencofrado",vert:"Verticales"};
 
 function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#888"; }
 let renderer, scene, camera, controls, groups = {}, mats = {};
@@ -272,6 +273,7 @@ function initViewer(){
   return () => { controls.update(); renderer.render(scene, camera); };
 }
 function main(){
+  DAYS.forEach((d, i) => d.tasks.forEach(tk => { if (tk[1].includes("{SIG}")) { const n = DAYS[i+1]; tk[1] = tk[1].replace("{SIG}", n ? fdate(n.d) : "día siguiente"); } }));
   let draw = null;
   try { if (window.THREE) draw = initViewer(); } catch (err) { draw = null; }
   if (!draw) document.getElementById("stage").innerHTML = '<p style="padding:20px">La vista 3D no se pudo abrir en este navegador. El plan día por día está más abajo.</p>';
@@ -353,7 +355,7 @@ async function objImagen(day, titulo){
   const H = 120 + 190 + (shot ? 700 : 0) + 70 + tasksH + 60 + 70 + Math.max(1, ords.length) * 50 + 110;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d");
-  const col = { pour:"#e0522b", form:"#c99a5b", steel:"#4f6fae", done:"#8f9791", rec:"#6f7872" };
+  const col = { pour:"#e0522b", form:"#c99a5b", steel:"#4f6fae", done:"#8f9791", rec:"#6f7872", vert:"#5f7d6c" };
   x.fillStyle = "#f4f5f1"; x.fillRect(0, 0, W, H);
   x.fillStyle = "#142d20"; x.fillRect(0, 0, W, 120);
   x.fillStyle = "#fff"; x.font = "600 40px 'IBM Plex Sans', system-ui, sans-serif"; x.textBaseline = "middle";
