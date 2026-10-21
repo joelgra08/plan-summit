@@ -144,7 +144,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
     <li>El encofrado vertical de S3 (tandas 3 y 4) no baja a pie de torre: queda armado hasta la mañana siguiente al llenado de la losa S1 de arriba, y ahí se desencofra y sube directo a S1 para la tanda 1.</li>
     <li>La losa S3 no se puede cerrar con los tableros verticales de S3 parados. El día de la losa S1 se encofra solo lo libre (pasillos); se termina al día siguiente, cuando los tableros suben a S1. La herrería de S3 entra recién el otro día (7 h) y S3 se llena al día siguiente de la herrería.</li>
     <li>Hay dos pisos de losa encofrados y se desencofra siempre el de más abajo (7 a 10 días). El día de la losa S3 (sin verticales) y el día de margen sin llenado son los ideales para desencofrar y recuperar material de losa.</li>
-    <li>Con un solo encofrado de 0,22 × 2,00, el jueves 22/10 se llena S3 con E06 y el viernes 23/10 E05 sola (1,2 m³). E06 va antes que E05 porque conviene para tapar la losa.</li>
+    <li>Jueves 22/10 sin llenado: se arman los tableros de S3, se termina de tapar S2 y entra la herrería de S2. El viernes 23/10 se llena la losa S1 junto con los pilares de S3. Con un solo encofrado de 0,22 × 2,00, E06 va el viernes, E05 el lunes 26/10, G07 el martes 27/10 y F07 el miércoles 28/10.</li>
     <li>Encofrado de losa: S1 en 1 día, S2 en 2 días, S3 en 1 día. Losa por sector: herrería al día siguiente (S1 y S3: 7 h; S2 con la escalera: 9 h, la hora que falta se termina a primera hora del otro día) y llenado el día después a las 17 h. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
     <li>Tandas del piso tipo: 1) S1 menos F07 · 2) F07, núcleo, E09, D09, C09, C09A, T01 asc. · 2b) pata, C07, C08 (con la losa S3) · 3) T02 asc. sup., C04, D04A, E06 · 4) C06, C05, E05, T04.</li>
     <li>El viernes 30/10 no se hormigona nada (víspera de fin de semana largo): ese día se adelanta herrería y encofrado, y la tanda 4 pasa al martes 3/11.</li>
@@ -190,10 +190,10 @@ const DAYS = [
    tasks:[["pour","17 h: llenar T05, C07, C08 y C09A"],["steel","Losa N107 S3: terminar hierro"]], o45:9.8, o35:0, what:"Verticales: T05, C07, C08, C09A" },
  { d:WDAYS[1], lvl:"Losa N107 S3 + losa N108", base:{3:"pour"}, vert:{...done(before,HOY),...pour(PATA)}, slab:{1:"form"},
    tasks:[["rec","Día ideal para desencofrar material de losa"],["form","Losa N108 S1: encofrado"],["pour","13 h: llenar losa N107 Sector 3 con bomba"],["pour","17 h: llenar la pata de la escalera"]], o45:1.7, o35:45.3, what:"Losa N107 S3 (13 h) + pata" },
- { d:WDAYS[2], lvl:"Verticales N107 → N108 + losa N108", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"steel",2:"form"},
-   tasks:[["steel","Losa N108 S1: entra y termina la herrería (7 h)"],["form","Losa N108 S2: encofrado"],["pour","17 h: verticales de S3: C06, C05, E06, T02 asc. sup., C04, D04A, T04 (E06 antes que E05)"]], o45:18.6, o35:0, what:"Verticales S3 menos E05" },
- { d:WDAYS[3], lvl:"Losa N108 S1", base:{}, vert:{...done(before,HOY,PATA,S3V),...pour(["E05"])}, slab:{1:"pour",2:"steel",3:"formPart"},
-   tasks:[["rec","Día ideal para desencofrar material de losa"],["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"],["steel","Losa N108 S2: entra la herrería (9 h, termina el lunes a primera hora)"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba y E05 con grúa"]], o45:1.2, o35:51.8, what:"Losa N108 S1 + E05" },
+ { d:WDAYS[2], lvl:"Losa N108 + tableros de S3", base:{}, vert:{...done(before,HOY,PATA)}, slab:{1:"steel",2:"form"},
+   tasks:[["vert","Armar los tableros de los pilares de S3 (se llenan el viernes)"],["form","Losa N108 S2: terminar el encofrado"],["steel","Losa N108 S2: entra la herrería (9 h, termina el viernes)"],["nopour","Sin llenado"]], o45:0, o35:0, what:"" },
+ { d:WDAYS[3], lvl:"Losa N108 S1 + pilares de S3", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"pour",2:"steel",3:"formPart"},
+   tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: termina la herrería"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, T02 asc. sup., C04, D04A, T04"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
 ];
 // Ciclo de 7 días hábiles (≈3 losas por mes). Día A = llenado de losa S1.
 // A+1 suben los tableros de S3 a S1 y se termina el encofrado de S3; A+2 herrería S3; A+3 se llena S3.
@@ -208,13 +208,17 @@ for (let g = 0; 108 + g < LAST; g++) {
   FLOORS.push({ L, s });
   const up = L + 1, sigue = up < LAST;
   const O = [
-    { base:{2:"pour",3:"form"}, vert:{...pour(byT(1))}, slab:{},
-      tasks:[UP,["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`],["steel",`Losa N${L} S2: termina la herrería (1 h) a primera hora`],
+    { base:{2:"pour",3:"form"}, vert: g === 0 ? {...pour(byT(1).filter(c => c !== "G07"))} : {...pour(byT(1))}, slab:{},
+      tasks: g === 0
+        ? [UP,["form",`Losa N${L} S3: terminar el encofrado (menos alrededor de E05)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour","17 h: tanda 1 sobre la losa S1: F09, G09, G08, H09, T02 asc. inf., T05 (G07 pasa al martes)"],["pour","17 h: E05 (el encofrado de 2,00 pasa de E06 a E05)"]]
+        : [UP,["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`],["steel",`Losa N${L} S2: termina la herrería (1 h) a primera hora`],
              ["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
-    { base:{3:"steel"}, vert:{...done(tandas(2)),...pour(byT(2))}, slab:{},
-      tasks:[["steel",`Losa N${L} S3: entra y termina la herrería (7 h)`],["pour",`17 h: tanda 2: ${TXT[2]}`]], o45:24.7, o35:0, what:"Tanda 2" },
-    { base:{3:"pour"}, vert:{...done(tandas(2.5)),...pour(byT(2.5))}, slab:{},
-      tasks:[REC,["pour",`17 h: llenar losa N${L} Sector 3 con bomba`],["pour","17 h: pata de la escalera, C07 y C08 (sobre la losa S2)"]], o45:6.9, o35:45.3, what:`Losa N${L} S3 + pata, C07, C08` },
+    { base:{3:"steel"}, vert: g === 0 ? {...done(byT(1).filter(c => c !== "G07")),...pour(byT(2).filter(c => c !== "F07").concat(["G07"]))} : {...done(tandas(2)),...pour(byT(2))}, slab:{},
+      tasks: g === 0
+        ? [["form",`Losa N${L} S3: cerrar el encofrado alrededor de E05 (a primera hora)`],["steel",`Losa N${L} S3: entra y termina la herrería (7 h)`],["pour","17 h: tanda 2: núcleo, E09, D09, C09, C09A, T01 asc. + G07 (F07 pasa al miércoles: hay un solo encofrado de 2,00)"]]
+        : [["steel",`Losa N${L} S3: entra y termina la herrería (7 h)`],["pour",`17 h: tanda 2: ${TXT[2]}`]], o45:24.7, o35:0, what:"Tanda 2" },
+    { base:{3:"pour"}, vert: g === 0 ? {...done(tandas(2).filter(c => c !== "F07")),...pour(byT(2.5).concat(["F07"]))} : {...done(tandas(2.5)),...pour(byT(2.5))}, slab:{},
+      tasks:[REC,["pour",`17 h: llenar losa N${L} Sector 3 con bomba`],["pour", g === 0 ? "17 h: pata de la escalera, C07 y C08 (sobre la losa S2) y F07" : "17 h: pata de la escalera, C07 y C08 (sobre la losa S2)"]], o45: g === 0 ? 8.1 : 6.9, o35:45.3, what:`Losa N${L} S3 + pata, C07, C08` },
     { base:{}, vert:{...done(tandas(3)),...pour(byT(3))}, slab:{1:"form"},
       tasks:[["form",`Losa N${up} S1: encofrado`],["pour",`17 h: tanda 3: ${TXT[3]}`]], o45:9.3, o35:0, what:"Tanda 3" },
     { base:{}, vert:{...done(tandas(4)),...pour(byT(4))}, slab:{1:"steel",2:"form"},
@@ -344,7 +348,7 @@ function main(){
 
   // Calendario por nivel
   const fw = w => { const d = DAYS.find(x => x.what === w) || DAYS.find(x => (x.what || "").startsWith(w + " ")); return d ? fdate(d.d) : "—"; };
-  const rows = [`<tr class="${DAYS[4].d > TODAY ? "today" : ""}"><td><b>N107 → N108</b></td><td>${fcota(NCI(107))}</td><td>${fdate(DAYS[0].d)} a ${fdate(DAYS[3].d)}</td><td>N108</td><td>${fw("Losa N108 S1 + E05")}</td><td>${fw("Losa N108 S2 + tanda 1")}</td><td>${fw("Losa N108 S3")}</td></tr>`];
+  const rows = [`<tr class="${DAYS[4].d > TODAY ? "today" : ""}"><td><b>N107 → N108</b></td><td>${fcota(NCI(107))}</td><td>${fdate(DAYS[0].d)} a ${fdate(DAYS[3].d)}</td><td>N108</td><td>${fw("Losa N108 S1 + pilares S3")}</td><td>${fw("Losa N108 S2 + tanda 1")}</td><td>${fw("Losa N108 S3")}</td></tr>`];
   FLOORS.forEach(f => {
     const up = f.L + 1, ds = DAYS.filter(d => d.fl === f.L && d.k <= 4);
     const s2 = up === LAST ? `Losa N${up} S2` : `Losa N${up} S2 + tanda 1`, s3 = `Losa N${up} S3`;
