@@ -110,6 +110,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 <div class="legend">
   <span><i style="--c:var(--pour)"></i>Se llena ese día (17 h)</span>
   <span><i style="--c:var(--form)"></i>Encofrado de losa</span>
+  <span><i style="--c:var(--form);opacity:.4"></i>Encofrado de losa parcial</span>
   <span><i style="--c:var(--steel)"></i>Losa con hierro / instalaciones</span>
   <span><i style="--c:var(--done)"></i>Ya llenado</span>
   <span><i style="--c:#d9ddd8"></i>Pendiente</span>
@@ -141,6 +142,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
   <ul class="notes">
     <li>Se hormigona después de las 17 h, así el mismo día entra encofrado o herrería y a la tarde se llena. Las verticales se desencofran a primera hora del día siguiente y ese mismo día se arma la tanda que sigue.</li>
     <li>El encofrado vertical de S3 (tandas 3 y 4) no baja a pie de torre: queda armado hasta la mañana siguiente al llenado de la losa S1 de arriba, y ahí se desencofra y sube directo a S1 para la tanda 1.</li>
+    <li>La losa S3 no se puede cerrar con los tableros verticales de S3 parados. El día de la losa S1 se encofra solo lo libre (pasillos); se termina cuando los tableros suben a S1, y ese día la herrería de S3 entra desde las 13–14 h y termina a la mañana siguiente.</li>
     <li>Hay dos pisos de losa encofrados y se desencofra siempre el de más abajo (7 a 10 días). Cada piso tiene dos días sin llenado (días 5 y 7 del ciclo): son el margen para atrasos y los días ideales para desencofrar y recuperar material de losa.</li>
     <li>Con un solo encofrado de 0,22 × 2,00, el jueves 22/10 se llena S3 con E06 y el viernes 23/10 E05 sola (1,2 m³). E06 va antes que E05 porque conviene para tapar la losa.</li>
     <li>Encofrado de losa: S1 en 1 día, S2 en 2 días, S3 en 1 día. Losa por sector: herrería al día siguiente (S1 y S3: 7 h; S2 con la escalera: 9 h, la hora que falta se termina a primera hora del otro día) y llenado el día después a las 17 h. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
@@ -190,8 +192,8 @@ const DAYS = [
    tasks:[["rec","Día ideal para desencofrar material de losa"],["form","Losa N108 S1: encofrado"],["pour","13 h: llenar losa N107 Sector 3 con bomba"],["pour","17 h: llenar la pata de la escalera"]], o45:1.7, o35:45.3, what:"Losa N107 S3 (13 h) + pata" },
  { d:WDAYS[2], lvl:"Verticales N107 → N108 + losa N108", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"steel",2:"form"},
    tasks:[["steel","Losa N108 S1: entra y termina la herrería (7 h)"],["form","Losa N108 S2: encofrado"],["pour","17 h: verticales de S3: C06, C05, E06, T02 asc. sup., C04, D04A, T04 (E06 antes que E05)"]], o45:18.6, o35:0, what:"Verticales S3 menos E05" },
- { d:WDAYS[3], lvl:"Losa N108 S1", base:{}, vert:{...done(before,HOY,PATA,S3V),...pour(["E05"])}, slab:{1:"pour",2:"steel",3:"form"},
-   tasks:[["rec","Día ideal para desencofrar material de losa"],["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"],["steel","Losa N108 S2: entra la herrería (9 h, termina el lunes a primera hora)"],["form","Losa N108 S3: encofrado"],["pour","17 h: llenar losa N108 Sector 1 con bomba y E05 con grúa"]], o45:1.2, o35:51.8, what:"Losa N108 S1 + E05" },
+ { d:WDAYS[3], lvl:"Losa N108 S1", base:{}, vert:{...done(before,HOY,PATA,S3V),...pour(["E05"])}, slab:{1:"pour",2:"steel",3:"formPart"},
+   tasks:[["rec","Día ideal para desencofrar material de losa"],["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"],["steel","Losa N108 S2: entra la herrería (9 h, termina el lunes a primera hora)"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba y E05 con grúa"]], o45:1.2, o35:51.8, what:"Losa N108 S1 + E05" },
 ];
 // Ciclo de 7 días hábiles (≈3 losas por mes): piso g arranca en WDAYS[4 + 7g] con verticales N(108+g) → N(109+g)
 const CICLO = 7;
@@ -205,20 +207,20 @@ for (let g = 0; 108 + g < LAST; g++) {
   const up = L + 1, sigue = up < LAST;
   const O = [
     { base:{2:"pour",3:"steel"}, vert:{...pour(byT(1))}, slab:{},
-      tasks:[...(g === 0 ? [UP, ["steel",`Losa N${L}: termina la herrería de S2 (1 h); entra y termina la de S3 (7 h)`]] : []),
+      tasks:[...(g === 0 ? [UP, ["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`], ["steel",`Losa N${L}: termina la herrería de S2 (1 h) a primera hora; la de S3 entra desde las 13–14 h`]] : [["steel",`Losa N${L} S3: termina la herrería a primera hora`]]),
              ["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
     { base:{3:"pour"}, vert:{...done(tandas(2)),...pour(byT(2))}, slab:{},
-      tasks:[["pour",`17 h: llenar losa N${L} Sector 3 con bomba`],["pour",`17 h: tanda 2: ${TXT[2]}`]], o45:24.7, o35:45.3, what:`Losa N${L} S3 + tanda 2` },
+      tasks:[...(g === 0 ? [["steel",`Losa N${L} S3: termina la herrería (a la mañana)`]] : []),["pour",`17 h: llenar losa N${L} Sector 3 con bomba`],["pour",`17 h: tanda 2: ${TXT[2]}`]], o45:24.7, o35:45.3, what:`Losa N${L} S3 + tanda 2` },
     { base:{}, vert:{...done(tandas(3)),...pour(byT(3))}, slab:{1:"form"},
       tasks:[["form",`Losa N${up} S1: encofrado`],["pour",`17 h: tanda 3: ${TXT[3]}`]], o45:16.2, o35:0, what:"Tanda 3" },
     { base:{}, vert:{...done(tandas(4)),...pour(byT(4))}, slab:{1:"steel",2:"form"},
       tasks:[["steel",`Losa N${up} S1: entra y termina la herrería (7 h)`],["form",`Losa N${up} S2: encofrado (día 1 de 2)`],["pour",`17 h: tanda 4: ${TXT[4]}`]], o45:10.5, o35:0, what:"Tanda 4" },
     { base:{}, vert:{...done(ALL)}, slab:{1:"steel",2:"form"},
       tasks:[REC,["form",`Losa N${up} S2: termina el encofrado`],["nopour","Sin llenado: día de margen"]], o45:0, o35:0 },
-    { base:{}, vert:{...done(ALL)}, slab:{1:"pour",2:"steel",3:"form"},
-      tasks:[...(sigue ? [KEEP] : []),["steel",`Losa N${up} S2: entra la herrería (9 h, termina mañana a primera hora)`],["form",`Losa N${up} S3: encofrado`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
-    { base:{}, vert:{...done(ALL)}, slab:{1:"done",2:"steel",3:"steel"},
-      tasks:[...(sigue ? [UP] : []),REC,["steel",`Losa N${up}: termina la herrería de S2 (1 h); entra y termina la de S3 (7 h)`],["nopour","Sin llenado: día de margen"]], o45:0, o35:0 },
+    { base:{}, vert:{...done(ALL)}, slab:{1:"pour",2:"steel",3:"formPart"},
+      tasks:[...(sigue ? [KEEP] : []),["steel",`Losa N${up} S2: entra la herrería (9 h, termina mañana a primera hora)`],["form",`Losa N${up} S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
+    { base:{}, vert:{...done(ALL)}, slab:{1:"done",2:"steel",3:"form"},
+      tasks:[...(sigue ? [UP] : []),["form",`Losa N${up} S3: terminar el encofrado (con los tableros ya en S1)`],["steel",`Losa N${up}: termina la herrería de S2 (1 h) a primera hora; la de S3 entra desde las 13–14 h`],["nopour","Sin llenado: día de margen"]], o45:0, o35:0 },
   ];
   O.forEach((o, k) => DAYS.push({ ...o, fl:L, k, d:WDAYS[s + k], lvl: k < 2 ? `Losa N${L} + verticales N${L} → N${up}` : k < 4 ? `Verticales N${L} → N${up} · cota ${fcota(NCI(L))} + losa N${up}` : `Losa N${up}` }));
 }
@@ -266,7 +268,7 @@ function build(){
   scene.add(new THREE.AmbientLight(0xffffff, .62));
   const dl = new THREE.DirectionalLight(0xffffff, .75); dl.position.set(-20, 40, 25); scene.add(dl);
   const m = (c, o=1) => new THREE.MeshLambertMaterial({color:new THREE.Color(c), transparent:o<1, opacity:o});
-  mats = { pour:m(css("--pour")), done:m("#a3aaa5"), pend:m("#dfe3de", .35), form:m(css("--form"), .9), steel:m(css("--steel"), .85), base:m("#c9cec9") };
+  mats = { pour:m(css("--pour")), done:m("#a3aaa5"), pend:m("#dfe3de", .35), form:m(css("--form"), .9), formPart:m(css("--form"), .32), steel:m(css("--steel"), .85), base:m("#c9cec9") };
   const edge = new THREE.LineBasicMaterial({color:0x3a423d, transparent:true, opacity:.55});
   const all = DATA.sl.flatMap(s => s.p);
   const cx = (Math.min(...all.map(p=>p[1])) + Math.max(...all.map(p=>p[1])))/2*S;
