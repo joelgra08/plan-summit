@@ -145,6 +145,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
     <li>Con un solo encofrado de 0,22 × 2,00, el jueves 22/10 se llena S3 con E06 y el viernes 23/10 E05 sola (1,2 m³). E06 va antes que E05 porque conviene para tapar la losa.</li>
     <li>Losa por sector: encofrado en 1 día, herrería al día siguiente (S1 y S3: 7 h; S2 con la escalera: 9 h, la hora que falta se termina a primera hora del otro día) y llenado el día después a las 17 h. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
     <li>Tandas del piso tipo: 1) S1 menos F07 · 2) F07, núcleo, E09, D09, C09, C09A, T01 asc. · 3) pata, C07, C08, T02 asc. sup., C04, D04A, E06 · 4) C06, C05, E05, T04.</li>
+    <li>El viernes 30/10 no se hormigona (víspera de fin de semana largo): ese día se trabaja en herrería, encofrado y desencofrado de losa, y la losa N109 S1 pasa al martes 3/11. Todo lo que sigue se corre un día.</li>
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
@@ -210,7 +211,7 @@ for (let g = 0; 108 + g < LAST; g++) {
     { base:{}, vert:{...done(ALL)}, slab:{1:"pour",2:"steel",3:"form"},
       tasks:[["rec","Día ideal para desencofrar material de losa"],...(up < LAST ? [["vert","Verticales de S3: no desencofrar, quedan armadas hasta el {SIG} a primera hora"]] : []),["steel",`Losa N${up} S2: entra la herrería (9 h, termina al día siguiente a primera hora)`],["form",`Losa N${up} S3: encofrado`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
   ];
-  O.forEach((o, k) => DAYS.push({ ...o, d:WDAYS[s + k], lvl: k < 2 ? `Losa N${L} + verticales N${L} → N${up}` : k < 4 ? `Verticales N${L} → N${up} · cota ${fcota(NCI(L))} + losa N${up}` : `Losa N${up}` }));
+  O.forEach((o, k) => DAYS.push({ ...o, fl:L, k, d:WDAYS[s + k], lvl: k < 2 ? `Losa N${L} + verticales N${L} → N${up}` : k < 4 ? `Verticales N${L} → N${up} · cota ${fcota(NCI(L))} + losa N${up}` : `Losa N${up}` }));
 }
 // Cierre: el último piso de verticales es N125 → N126; la losa N126 termina con S2 y S3.
 {
@@ -218,11 +219,34 @@ for (let g = 0; 108 + g < LAST; g++) {
   DAYS.push({ d:WDAYS[s], lvl:`Losa N${L}`, base:{2:"pour",3:"steel"}, vert:{}, slab:{}, tasks:[["steel",`Losa N${L}: terminar herrería S2 y herrería S3`],["pour",`17 h: llenar losa N${L} Sector 2 con bomba`]], o45:0, o35:72.7, what:`Losa N${L} S2` });
   DAYS.push({ d:WDAYS[s+1], lvl:`Losa N${L}`, base:{3:"pour"}, vert:{}, slab:{}, tasks:[["pour",`17 h: llenar losa N${L} Sector 3 con bomba: última losa`]], o45:0, o35:45.3, what:`Losa N${L} S3` });
 }
+// Días en que no se hormigona losa (víspera de fin de semana largo). A lo sumo pilares a la mañana.
+const SIN_LOSA = new Set(["2026-10-30"]);
+(function redatar(){
+  const out = []; let p = 0;
+  for (let i = 0; i < DAYS.length; i++) {
+    const day = DAYS[i];
+    if (SIN_LOSA.has(WDAYS[p]) && day.o35 > 0) {
+      const pours = day.tasks.filter(t => t[0] === "pour");
+      const rest = day.tasks.filter(t => t[0] !== "pour" && t[0] !== "vert");
+      // Ese día se trabaja igual (herrería, encofrado, desencofrado de losa) pero no se llena
+      out.push({ ...day, d:WDAYS[p++], o45:0, o35:0, what:"", slab:{...day.slab, 1:"steel"},
+        tasks:[["nopour","Sin hormigón: día previo a fin de semana largo"], ...rest, ["vert","Verticales de S3: siguen armadas"]] });
+      // Al día siguiente: la herrería que tocaba ese día + el llenado que se pasó
+      const next = DAYS[i+1];
+      const steelNext = next ? next.tasks.filter(t => t[0] === "steel") : [];
+      if (next) next.tasks = next.tasks.filter(t => t[0] !== "steel");
+      out.push({ ...day, d:WDAYS[p++], tasks:[...steelNext, ...pours, ...day.tasks.filter(t => t[0] === "vert")] });
+      continue;
+    }
+    out.push({ ...day, d:WDAYS[p++] });
+  }
+  DAYS.length = 0; out.forEach(d => DAYS.push(d));
+})();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
 const fnum = n => n ? n.toFixed(1).replace(".", ",") : "—";
-const TASK_C = {pour:"var(--pour)",form:"var(--form)",steel:"var(--steel)",done:"var(--done)",rec:"var(--done)",vert:"#5f7d6c"};
-const TASK_L = {pour:"Llenado",form:"Encofrado",steel:"Hierro",done:"Desencofrar",rec:"Desencofrado",vert:"Verticales"};
+const TASK_C = {pour:"var(--pour)",form:"var(--form)",steel:"var(--steel)",done:"var(--done)",rec:"var(--done)",vert:"#5f7d6c",nopour:"#7a1820"};
+const TASK_L = {pour:"Llenado",form:"Encofrado",steel:"Hierro",done:"Desencofrar",rec:"Desencofrado",vert:"Verticales",nopour:"Sin llenado"};
 
 function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "#888"; }
 let renderer, scene, camera, controls, groups = {}, mats = {};
@@ -303,10 +327,13 @@ function main(){
     `<tr class="${d.d === TODAY ? "today" : ""}"><td class="dt">${fdate(d.d)}</td><td>${d.what}</td><td class="n">${fnum(d.o45)}</td><td class="n">${fnum(d.o35)}</td></tr>`).join("");
 
   // Calendario por nivel
-  const rows = [`<tr class="${WDAYS[4] > TODAY ? "today" : ""}"><td><b>N107 → N108</b></td><td>${fcota(NCI(107))}</td><td>${fdate(WDAYS[0])} a ${fdate(WDAYS[3])}</td><td>N108</td><td>${fdate(WDAYS[3])}</td><td>${fdate(WDAYS[4])}</td><td>${fdate(WDAYS[5])}</td></tr>`];
+  const fw = w => { const d = DAYS.find(x => x.what === w); return d ? fdate(d.d) : "—"; };
+  const rows = [`<tr class="${DAYS[4].d > TODAY ? "today" : ""}"><td><b>N107 → N108</b></td><td>${fcota(NCI(107))}</td><td>${fdate(DAYS[0].d)} a ${fdate(DAYS[3].d)}</td><td>N108</td><td>${fw("Losa N108 S1 + E05")}</td><td>${fw("Losa N108 S2 + tanda 1")}</td><td>${fw("Losa N108 S3 + tanda 2")}</td></tr>`];
   FLOORS.forEach(f => {
-    const up = f.L + 1, s = f.s;
-    rows.push(`<tr class="${cur && cur.L === f.L ? "today" : ""}"><td><b>N${f.L} → N${up}</b></td><td>${fcota(NCI(f.L))}</td><td>${fdate(WDAYS[s])} a ${fdate(WDAYS[s+3])}</td><td>N${up}</td><td>${fdate(WDAYS[s+4])}</td><td>${fdate(WDAYS[s+5])}</td><td>${fdate(WDAYS[s+6])}</td></tr>`);
+    const up = f.L + 1, ds = DAYS.filter(d => d.fl === f.L && d.k <= 3);
+    const s2 = up === LAST ? `Losa N${up} S2` : `Losa N${up} S2 + tanda 1`, s3 = up === LAST ? `Losa N${up} S3` : `Losa N${up} S3 + tanda 2`;
+    const enCurso = ds.length && ds[0].d <= TODAY && DAYS.find(d => d.what === `Losa N${up} S1`)?.d >= TODAY;
+    rows.push(`<tr class="${enCurso ? "today" : ""}"><td><b>N${f.L} → N${up}</b></td><td>${fcota(NCI(f.L))}</td><td>${fdate(ds[0].d)} a ${fdate(ds[ds.length-1].d)}</td><td>N${up}</td><td>${fw(`Losa N${up} S1`)}</td><td>${fw(s2)}</td><td>${fw(s3)}</td></tr>`);
   });
   document.getElementById("cal").innerHTML = rows.join("");
 
@@ -355,7 +382,7 @@ async function objImagen(day, titulo){
   const H = 120 + 190 + (shot ? 700 : 0) + 70 + tasksH + 60 + 70 + Math.max(1, ords.length) * 50 + 110;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d");
-  const col = { pour:"#e0522b", form:"#c99a5b", steel:"#4f6fae", done:"#8f9791", rec:"#6f7872", vert:"#5f7d6c" };
+  const col = { pour:"#e0522b", form:"#c99a5b", steel:"#4f6fae", done:"#8f9791", rec:"#6f7872", vert:"#5f7d6c", nopour:"#7a1820" };
   x.fillStyle = "#f4f5f1"; x.fillRect(0, 0, W, H);
   x.fillStyle = "#142d20"; x.fillRect(0, 0, W, 120);
   x.fillStyle = "#fff"; x.font = "600 40px 'IBM Plex Sans', system-ui, sans-serif"; x.textBaseline = "middle";
