@@ -145,7 +145,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
     <li>La losa S3 no se puede cerrar con los tableros verticales de S3 parados. El día de la losa S1 se encofra solo lo libre (pasillos); se termina al día siguiente, cuando los tableros suben a S1. La herrería de S3 entra recién el otro día (7 h) y S3 se llena al día siguiente de la herrería.</li>
     <li>Hay dos pisos de losa encofrados y se desencofra siempre el de más abajo (7 a 10 días). El día de la losa S3 (sin verticales) y el día de margen sin llenado son los ideales para desencofrar y recuperar material de losa.</li>
     <li>Jueves 22/10 sin llenado: se arman los tableros de S3, se termina de tapar S2 y entra la herrería de S2. El viernes 23/10 se llena la losa S1 junto con los pilares de S3. Con un solo encofrado de 0,22 × 2,00, E06 va el viernes, E05 el lunes 26/10, G07 el martes 27/10 y F07 el miércoles 28/10.</li>
-    <li>Encofrado de losa: S1 en 1 día, S2 en 2 días, S3 en 1 día. Losa por sector: herrería al día siguiente (S1 y S3: 7 h; S2 con la escalera: 9 h, la hora que falta se termina a primera hora del otro día) y llenado el día después a las 17 h. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
+    <li>Herrería: entra y termina S1 (7 h) y sigue de largo a S2 el mismo día; S2 (9 h con la escalera) termina al día siguiente, mientras se llena S1. Ese día previo a S1 la gente se enfoca en tapar S2. Encofrado de losa: S1 en 1–2 días, S2 en 2 días, S3 parcial y se termina al subir los tableros. S3: la herrería entra al día siguiente de subir los tableros (7 h) y se llena al otro día. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
     <li>Tandas del piso tipo: 1) S1 menos F07 · 2) F07, núcleo, E09, D09, C09, C09A, T01 asc. · 2b) pata, C07, C08 (con la losa S3) · 3) T02 asc. sup., C04, D04A, E06 · 4) C06, C05, E05, T04.</li>
     <li>El viernes 30/10 no se hormigona nada (víspera de fin de semana largo): ese día se adelanta herrería y encofrado, y la tanda 4 pasa al martes 3/11.</li>
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
@@ -191,9 +191,9 @@ const DAYS = [
  { d:WDAYS[1], lvl:"Losa N107 S3 + losa N108", base:{3:"pour"}, vert:{...done(before,HOY),...pour(PATA)}, slab:{1:"form"},
    tasks:[["rec","Día ideal para desencofrar material de losa"],["form","Losa N108 S1: encofrado"],["pour","13 h: llenar losa N107 Sector 3 con bomba"],["pour","17 h: llenar la pata de la escalera"]], o45:1.7, o35:45.3, what:"Losa N107 S3 (13 h) + pata" },
  { d:WDAYS[2], lvl:"Losa N108 + tableros de S3", base:{}, vert:{...done(before,HOY,PATA)}, slab:{1:"steel",2:"form"},
-   tasks:[["vert","Armar los tableros de los pilares de S3 (se llenan el viernes)"],["form","Losa N108 S2: terminar el encofrado"],["steel","Losa N108 S2: entra la herrería (9 h, termina el viernes)"],["nopour","Sin llenado"]], o45:0, o35:0, what:"" },
+   tasks:[["steel","Losa N108 S1: entra y termina la herrería (7 h) y sigue de largo a S2"],["form","Losa N108 S2: terminar de tapar, con toda la gente"],["vert","Armar los tableros de los pilares de S3 (se llenan el viernes)"],["nopour","Sin llenado"]], o45:0, o35:0, what:"" },
  { d:WDAYS[3], lvl:"Losa N108 S1 + pilares de S3", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"pour",2:"steel",3:"formPart"},
-   tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: termina la herrería"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, T02 asc. sup., C04, D04A, T04"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
+   tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: la herrería termina mientras se llena S1"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, T02 asc. sup., C04, D04A, T04"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
 ];
 // Ciclo de 7 días hábiles (≈3 losas por mes). Día A = llenado de losa S1.
 // A+1 suben los tableros de S3 a S1 y se termina el encofrado de S3; A+2 herrería S3; A+3 se llena S3.
@@ -211,7 +211,7 @@ for (let g = 0; 108 + g < LAST; g++) {
     { base:{2:"pour",3:"form"}, vert: g === 0 ? {...pour(byT(1).filter(c => c !== "G07"))} : {...pour(byT(1))}, slab:{},
       tasks: g === 0
         ? [UP,["form",`Losa N${L} S3: terminar el encofrado (menos alrededor de E05)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour","17 h: tanda 1 sobre la losa S1: F09, G09, G08, H09, T02 asc. inf., T05 (G07 pasa al martes)"],["pour","17 h: E05 (el encofrado de 2,00 pasa de E06 a E05)"]]
-        : [UP,["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`],["steel",`Losa N${L} S2: termina la herrería (1 h) a primera hora`],
+        : [UP,["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`],
              ["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
     { base:{3:"steel"}, vert: g === 0 ? {...done(byT(1).filter(c => c !== "G07")),...pour(byT(2).filter(c => c !== "F07").concat(["G07"]))} : {...done(tandas(2)),...pour(byT(2))}, slab:{},
       tasks: g === 0
@@ -222,11 +222,11 @@ for (let g = 0; 108 + g < LAST; g++) {
     { base:{}, vert:{...done(tandas(3)),...pour(byT(3))}, slab:{1:"form"},
       tasks:[["form",`Losa N${up} S1: encofrado`],["pour",`17 h: tanda 3: ${TXT[3]}`]], o45:9.3, o35:0, what:"Tanda 3" },
     { base:{}, vert:{...done(tandas(4)),...pour(byT(4))}, slab:{1:"steel",2:"form"},
-      tasks:[["steel",`Losa N${up} S1: entra y termina la herrería (7 h)`],["form",`Losa N${up} S2: encofrado (día 1 de 2)`],["pour",`17 h: tanda 4: ${TXT[4]}`]], o45:10.5, o35:0, what:"Tanda 4" },
+      tasks:[["form",`Losa N${up} S1: terminar el encofrado`],["form",`Losa N${up} S2: encofrado (día 1 de 2)`],["pour",`17 h: tanda 4: ${TXT[4]}`]], o45:10.5, o35:0, what:"Tanda 4" },
     { base:{}, vert:{...done(ALL)}, slab:{1:"steel",2:"form"},
-      tasks:[REC,["form",`Losa N${up} S2: termina el encofrado`],["nopour","Sin llenado: día de margen"]], o45:0, o35:0 },
+      tasks:[["steel",`Losa N${up} S1: entra y termina la herrería (7 h) y sigue de largo a S2`],["form",`Losa N${up} S2: terminar de tapar, con toda la gente`],["nopour","Sin llenado"]], o45:0, o35:0 },
     { base:{}, vert:{...done(ALL)}, slab:{1:"pour",2:"steel",3:"formPart"},
-      tasks:[...(sigue ? [KEEP] : []),["steel",`Losa N${up} S2: entra la herrería (9 h, termina mañana a primera hora)`],["form",`Losa N${up} S3: ${PARC}`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
+      tasks:[...(sigue ? [KEEP] : []),["steel",`Losa N${up} S2: la herrería termina mientras se llena S1`],["form",`Losa N${up} S3: ${PARC}`],["pour",`17 h: llenar losa N${up} Sector 1 con bomba`]], o45:0, o35:51.8, what:`Losa N${up} S1` },
   ];
   O.forEach((o, k) => DAYS.push({ ...o, fl:L, k, d:WDAYS[s + k], lvl: k < 3 ? `Losa N${L} + verticales N${L} → N${up}` : k < 5 ? `Verticales N${L} → N${up} · cota ${fcota(NCI(L))} + losa N${up}` : `Losa N${up}` }));
 }
