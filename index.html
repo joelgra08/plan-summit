@@ -66,7 +66,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 .notes{display:grid;gap:6px;color:var(--muted);font-size:14px;margin:0;padding-left:18px;max-width:80ch}
 @media (max-width:760px){.day{grid-template-columns:1fr}.day figure{border-right:none;border-bottom:1px solid var(--line)}.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.vbar .hint{margin-left:0;width:100%}}
 .objbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.objbar button{font:600 14px var(--body);color:#fff;background:#142d20;border:1px solid #142d20;border-radius:6px;padding:10px 16px;cursor:pointer}
+.objbar button{font:600 14px var(--body);color:var(--bg);background:var(--fg);border:1px solid var(--fg);border-radius:6px;padding:10px 16px;cursor:pointer}
 .objbar button.alt{background:transparent;color:var(--fg);border-color:var(--line)}
 .objbar button:focus-visible{outline:2px solid var(--pour);outline-offset:2px}
 .objbar button:disabled{opacity:.6;cursor:progress}
@@ -78,40 +78,91 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 .topbar a.go:hover{background:#1f4a34}
 .topbar a.go:focus-visible{outline:2px solid #9fd4b6;outline-offset:2px}
 @media (max-width:520px){.topbar .tt{font-size:14.5px;white-space:normal;flex:1 1 0;min-width:0}.topbar a.go{margin-left:0}}
+
+/* Panel del día y navegación */
+.daynav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,1.6fr) repeat(2,minmax(0,1fr));gap:8px}
+.daynav button{font:700 18px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:48px;cursor:pointer}
+.daynav button#btnHoy{font-size:16px;background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.daynav button:disabled{opacity:.35;cursor:default}
+.daynav button:focus-visible,.pick input:focus-visible{outline:2px solid var(--pour);outline-offset:2px}
+.pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.pick input{font:500 15px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-height:42px}
+.daycard{border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.daycard .v3d{position:relative;border-right:1px solid var(--line);min-width:0}
+.daycard #stage{aspect-ratio:4/3}
+.daycard .vreset{position:absolute;right:10px;bottom:10px;font:600 12px var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+.daycard .dbody{padding:18px 18px 16px;gap:14px}
+.daycard .dnum{font-size:34px}
+.daycard ul.tasks li{font-size:15.5px}
+.daycard .objbar{border-top:1px solid var(--line);padding-top:12px}
+.objbar button{min-height:44px}
+.today-tag{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--pour);border-radius:4px;padding:2px 8px}
+details.sup summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+details.sup summary::-webkit-details-marker{display:none}
+details.sup summary::before{content:"▸";color:var(--muted);transition:transform .15s}
+details.sup[open] summary::before{transform:rotate(90deg)}
+details.sup .notes{margin-top:10px}
+.topbar .sp{flex:1 1 auto}
+.topbar button.tema-switch{display:inline-flex;align-items:center;gap:8px;background:transparent;border:none;color:#dfeae3;font:500 13px var(--body);padding:4px 6px;cursor:pointer;white-space:nowrap}
+.tema-pista{position:relative;width:36px;height:20px;border-radius:999px;background:rgba(255,255,255,.28);transition:background .2s;flex:none}
+.tema-perilla{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .2s}
+.topbar button.tema-switch[aria-checked="true"] .tema-pista{background:#6fa886}
+.topbar button.tema-switch[aria-checked="true"] .tema-perilla{transform:translateX(16px)}
+.topbar button.tema-switch:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:6px}
+.topbar a.go{margin-left:0}
+@media (max-width:860px){.daycard{grid-template-columns:1fr}.daycard .v3d{border-right:none;border-bottom:1px solid var(--line)}}
+@media (max-width:520px){.topbar .tema-txt,.topbar .tt2{display:none}.topbar .tt{white-space:nowrap}.daycard .dnum{font-size:28px}}
+@media (max-width:860px){.daycard .dbody{order:-1;border-bottom:1px solid var(--line)}.daycard .v3d{border-bottom:none}}
 </style>
 <style>body{margin:0}</style>
 </head>
 <body>
 <header class="topbar">
   <img src="data:image/png;base64,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" alt="DECC">
-  <p class="tt">Plan de llenado Summit</p>
+  <p class="tt">Plan de llenado<span class="tt2"> Summit</span></p>
+  <span class="sp"></span>
+  <button id="btnTema" type="button" class="tema-switch" role="switch" aria-checked="false" title="Pasar a modo oscuro"><span class="tema-pista"><span class="tema-perilla"></span></span><span class="tema-txt">Modo oscuro</span></button>
   <a class="go" href="https://joelgra08.github.io/control-hormigon/" target="_blank" rel="noopener noreferrer">Control de Hormigón ↗</a>
 </header>
 <div class="wrap">
 <header>
-  <div class="eye">Summit · Torre · cuadrilla Jhon · plan del 20/10/2026</div>
+  <div class="eye">Summit · Torre · cuadrilla Jhon · plan de llenados</div>
   <h1>Plan de llenado por día</h1>
-  <p class="lead">Desde la losa N107 hasta la N126. Las verticales van en 4 tandas con un encofrado de cada tipo y las losas por sector, S1 → S2 → S3, un sector por día. Desde el 26/10 el ritmo es un piso cada 7 días hábiles, unas 3 losas completas por mes, con todos los llenados después de las 17 h y un día de margen por piso. Abajo, el detalle de los próximos 15 días hábiles (se corre solo con la fecha) y el calendario completo por nivel.</p>
 </header>
 <div class="facts">
 <div id="facts" style="display:contents"></div>
 </div>
-<div class="objbar">
-  <button type="button" id="btnObjHoy">Descargar objetivos hoy</button>
-  <button type="button" id="btnObjManana" class="alt">Descargar objetivos de mañana</button>
-  <span class="msg" id="objMsg">Imagen lista para mandar por WhatsApp</span>
-</div>
 
-<section class="viewer" aria-label="Vista 3D por día">
-  <div class="vbar" id="vbar"></div>
-  <div id="stage"></div>
-  <div class="vcap" id="vcap"></div>
+<section style="display:grid;gap:10px" aria-label="Elegir día">
+  <nav class="daynav" aria-label="Cambiar de día">
+    <button type="button" id="btnM2" title="2 días antes" aria-label="2 días antes">«</button>
+    <button type="button" id="btnM1" title="Día anterior" aria-label="Día anterior">‹</button>
+    <button type="button" id="btnHoy">Hoy</button>
+    <button type="button" id="btnP1" title="Día siguiente" aria-label="Día siguiente">›</button>
+    <button type="button" id="btnP2" title="2 días después" aria-label="2 días después">»</button>
+  </nav>
+  <div class="pick"><label for="fechaSel">O elegí una fecha:</label><input type="date" id="fechaSel"></div>
 </section>
+
+<article class="daycard" aria-live="polite">
+  <div class="v3d"><div id="stage"></div><button type="button" class="vreset" id="btnVista">Vista inicial</button></div>
+  <div class="dbody">
+    <div class="dhead"><span class="dnum" id="selFecha"></span><span id="selHoy"></span></div>
+    <div class="dlvl" id="selLvl"></div>
+    <ul class="tasks" id="selTasks"></ul>
+    <div class="order" id="selOrder"></div>
+    <div class="objbar">
+      <button type="button" id="btnObj">Descargar objetivos</button>
+      <button type="button" id="btnObjSig" class="alt">Descargar objetivos día siguiente</button>
+      <span class="msg" id="objMsg">Imagen para mandar por WhatsApp</span>
+    </div>
+  </div>
+</article>
 <div class="legend">
   <span><i style="--c:var(--pour)"></i>Se llena ese día (17 h)</span>
   <span><i style="--c:var(--form)"></i>Encofrado de losa</span>
-  <span><i style="--c:var(--form);opacity:.4"></i>Encofrado de losa parcial</span>
-  <span><i style="--c:var(--steel)"></i>Losa con hierro / instalaciones</span>
+  <span><i style="--c:var(--form);opacity:.4"></i>Encofrado parcial</span>
+  <span><i style="--c:var(--steel)"></i>Hierro</span>
   <span><i style="--c:var(--done)"></i>Ya llenado</span>
   <span><i style="--c:#d9ddd8"></i>Pendiente</span>
 </div>
@@ -124,11 +175,6 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
   </table></div>
 </section>
 
-<section style="display:grid;gap:14px">
-  <h2>Día por día</h2>
-  <div class="days" id="days"></div>
-</section>
-
 <section style="display:grid;gap:10px">
   <h2>Calendario por nivel hasta N126</h2>
   <div class="tw"><table>
@@ -137,8 +183,10 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
   </table></div>
 </section>
 
-<section style="display:grid;gap:8px">
-  <h2>Supuestos</h2>
+<p class="lead">Desde la losa N107 hasta la N126. Las verticales van en 4 tandas con un encofrado de cada tipo y las losas por sector, S1 → S2 → S3, un sector por día. Desde el 26/10 el ritmo es un piso cada 7 días hábiles, unas 3 losas completas por mes, con todos los llenados después de las 17 h y un día de margen por piso.</p>
+
+<details class="sup">
+  <summary><h2>Supuestos</h2></summary>
   <ul class="notes">
     <li>Se hormigona después de las 17 h, así el mismo día entra encofrado o herrería y a la tarde se llena. Las verticales se desencofran a primera hora del día siguiente y ese mismo día se arma la tanda que sigue.</li>
     <li>El encofrado vertical de S3 (tandas 3 y 4) no baja a pie de torre: queda armado hasta la mañana siguiente al llenado de la losa S1 de arriba, y ahí se desencofra y sube directo a S1 para la tanda 1.</li>
@@ -152,7 +200,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
-</section>
+</details>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -334,32 +382,49 @@ function initViewer(){
   new ResizeObserver(resize).observe(stage); resize();
   return () => { controls.update(); renderer.render(scene, camera); };
 }
+let SEL = 0, REDRAW = null;
+function verDia(i){
+  SEL = Math.max(0, Math.min(DAYS.length - 1, i));
+  const d = DAYS[SEL];
+  if (REDRAW) setDay(d);
+  document.getElementById("selFecha").textContent = fdate(d.d);
+  document.getElementById("selHoy").innerHTML = d.d === TODAY ? '<span class="today-tag">Hoy</span>' : "";
+  document.getElementById("selLvl").textContent = d.lvl;
+  document.getElementById("selTasks").innerHTML = d.tasks.map(([k,t]) => `<li><span class="chip" style="--c:${TASK_C[k]}">${TASK_L[k]}</span><span>${t}</span></li>`).join("");
+  const ord = [d.o45 ? `<span><b>C45</b> · ${fnum(d.o45)} m³ · grúa</span>` : "", d.o35 ? `<span><b>C35</b> · ${fnum(d.o35)} m³ · bomba</span>` : ""].join("") || `<span class="none">Sin pedido</span>`;
+  document.getElementById("selOrder").innerHTML = `<span class="dtag" style="width:100%">Pedido Cielo Azul</span>${ord}`;
+  document.getElementById("fechaSel").value = d.d;
+  document.getElementById("btnM2").disabled = SEL < 2;
+  document.getElementById("btnM1").disabled = SEL < 1;
+  document.getElementById("btnP1").disabled = SEL > DAYS.length - 2;
+  document.getElementById("btnP2").disabled = SEL > DAYS.length - 3;
+  document.getElementById("btnObjSig").disabled = SEL > DAYS.length - 2;
+}
 function main(){
   DAYS.forEach((d, i) => { d.tasks = d.tasks.map(tk => { if (!tk[1].includes("{SIG}")) return tk; const n = DAYS[i+1]; return [tk[0], tk[1].replace("{SIG}", n ? fdate(n.d) : "día siguiente")]; }); });
-  let draw = null;
-  try { if (window.THREE) draw = initViewer(); } catch (err) { draw = null; }
-  if (!draw) document.getElementById("stage").innerHTML = '<p style="padding:20px">La vista 3D no se pudo abrir en este navegador. El plan día por día está más abajo.</p>';
-  const i0 = Math.max(0, DAYS.findIndex(d => d.d >= TODAY));
-  const WIN = DAYS.slice(i0 < 0 ? 0 : i0, (i0 < 0 ? 0 : i0) + 15);
+  try { if (window.THREE) REDRAW = initViewer(); } catch (err) { REDRAW = null; }
+  if (!REDRAW) { document.getElementById("stage").innerHTML = '<p style="padding:20px">La vista 3D no se pudo abrir en este navegador. Las tareas del día están al lado.</p>'; document.getElementById("btnVista").hidden = true; }
+  const iHoy = (() => { const k = DAYS.findIndex(d => d.d >= TODAY); return k < 0 ? DAYS.length - 1 : k; })();
+  const WIN = DAYS.slice(iHoy, iHoy + 15);
   const lastD = DAYS[DAYS.length - 1];
-  const fl = L => FLOORS.find(f => f.L === L);
-  const cur = [...FLOORS].reverse().find(f => WDAYS[f.s] <= TODAY);
   document.getElementById("facts").innerHTML = [
     [fdate(DAYS.find(d => d.what.startsWith("Losa N108 S3")).d), "losa N108 completa"],
-    ["7 días", "hábiles por piso desde el 26/10 (≈3 losas por mes)"],
+    ["7 días", "hábiles por piso (≈3 losas por mes)"],
     [`${fdate(lastD.d)}/${lastD.d.slice(2,4)}`, `losa N${LAST} completa`],
     [String(LAST - 107), "losas por delante (N108 a N126)"],
   ].map(([b,s]) => `<div class="fact"><b>${b}</b><span>${s}</span></div>`).join("");
 
-  const vbar = document.getElementById("vbar"), vcap = document.getElementById("vcap");
-  const show = day => {
-    if (draw) setDay(day);
-    vbar.querySelectorAll("button[data-d]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.d === day.d)));
-    vcap.innerHTML = `<b>${fdate(day.d)}</b> · ${day.lvl} · ${day.tasks.map(t=>t[1]).join(" · ")}`;
-  };
-  WIN.forEach(d => { const b = document.createElement("button"); b.type = "button"; b.dataset.d = d.d; b.id = "btn" + d.d; b.textContent = fdate(d.d); if (d.d === TODAY) b.classList.add("today"); b.addEventListener("click", () => show(d)); vbar.appendChild(b); });
-  if (draw) { const rb = document.createElement("button"); rb.type = "button"; rb.id = "btnVista"; rb.textContent = "Vista inicial"; rb.addEventListener("click", homeCam); vbar.appendChild(rb);
-    const hint = document.createElement("span"); hint.className = "hint"; hint.textContent = "Arrastrá para girar, rueda o pellizco para acercar"; vbar.appendChild(hint); }
+  // Navegación de días
+  const go = n => () => verDia(SEL + n);
+  document.getElementById("btnM2").addEventListener("click", go(-2));
+  document.getElementById("btnM1").addEventListener("click", go(-1));
+  document.getElementById("btnP1").addEventListener("click", go(1));
+  document.getElementById("btnP2").addEventListener("click", go(2));
+  document.getElementById("btnHoy").addEventListener("click", () => verDia(iHoy));
+  document.getElementById("btnVista").addEventListener("click", homeCam);
+  const fs = document.getElementById("fechaSel");
+  fs.min = DAYS[0].d; fs.max = lastD.d;
+  fs.addEventListener("change", () => { if (!fs.value) return; const k = DAYS.findIndex(d => d.d >= fs.value); verDia(k < 0 ? DAYS.length - 1 : k); });
 
   document.getElementById("orders").innerHTML = WIN.filter(d => d.o45 || d.o35).map(d =>
     `<tr class="${d.d === TODAY ? "today" : ""}"><td class="dt">${fdate(d.d)}</td><td>${d.what}</td><td class="n">${fnum(d.o45)}</td><td class="n">${fnum(d.o35)}</td></tr>`).join("");
@@ -375,25 +440,29 @@ function main(){
   });
   document.getElementById("cal").innerHTML = rows.join("");
 
-  const daysEl = document.getElementById("days");
-  WIN.forEach(d => {
-    let img = "";
-    if (draw) { homeCam(); setDay(d); renderer.setSize(720, 470, false); camera.aspect = 720/470; camera.updateProjectionMatrix(); renderer.render(scene, camera);
-      img = `<img alt="Vista 3D del ${fdate(d.d)}" src="${renderer.domElement.toDataURL("image/png")}">`; }
-    const ord = [d.o45 ? `<span><b>C45</b> · ${fnum(d.o45)} m³ · grúa</span>` : "", d.o35 ? `<span><b>C35</b> · ${fnum(d.o35)} m³ · bomba</span>` : ""].join("") || `<span class="none">Sin pedido</span>`;
-    const art = document.createElement("article"); art.className = "day" + (d.d === TODAY ? " today" : ""); art.id = "d" + d.d.replaceAll("-", "");
-    art.innerHTML = `<figure>${img}</figure><div class="dbody">
-      <div class="dhead"><span class="dnum">${fdate(d.d)}</span>${d.d === TODAY ? '<span class="dtag" style="color:var(--pour)">hoy</span>' : ""}</div>
-      <div class="dlvl">${d.lvl}</div>
-      <ul class="tasks">${d.tasks.map(([k,t]) => `<li><span class="chip" style="--c:${TASK_C[k]}">${TASK_L[k]}</span><span>${t}</span></li>`).join("")}</ul>
-      <div class="order"><span class="dtag" style="width:100%">Pedido Cielo Azul</span>${ord}</div></div>`;
-    daysEl.appendChild(art);
-  });
-  const start = WIN[0] || DAYS[0];
-  if (draw) { const st = document.getElementById("stage"); renderer.setSize(st.clientWidth, st.clientHeight, false); camera.aspect = st.clientWidth / st.clientHeight; camera.updateProjectionMatrix(); homeCam(); show(start);
-    const loop = () => { draw(); requestAnimationFrame(loop); }; loop(); }
-  else show(start);
+  if (REDRAW) { homeCam(); const loop = () => { REDRAW(); requestAnimationFrame(loop); }; loop(); }
+  verDia(iHoy);
 }
+
+// ---------- Modo claro / oscuro (mismo guardado que Control de Hormigón) ----------
+(function tema(){
+  const b = document.getElementById("btnTema");
+  const pintar = () => {
+    const at = document.documentElement.getAttribute("data-theme");
+    const oscuro = at ? at === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    b.setAttribute("aria-checked", oscuro ? "true" : "false");
+    b.title = oscuro ? "Pasar a modo claro" : "Pasar a modo oscuro";
+    b.querySelector(".tema-txt").textContent = oscuro ? "Modo claro" : "Modo oscuro";
+  };
+  try { const g = localStorage.getItem("tema"); if (g) document.documentElement.setAttribute("data-theme", g === "oscuro" ? "dark" : "light"); } catch (e) {}
+  pintar();
+  b.addEventListener("click", () => {
+    const oscuro = b.getAttribute("aria-checked") !== "true";
+    document.documentElement.setAttribute("data-theme", oscuro ? "dark" : "light");
+    try { localStorage.setItem("tema", oscuro ? "oscuro" : "claro"); } catch (e) {}
+    pintar();
+  });
+})();
 
 // ---------- Imagen de objetivos para WhatsApp ----------
 function objWrap(ctx, text, maxW){
@@ -447,15 +516,16 @@ async function objImagen(day, titulo){
   x.fillStyle = "#8a938d"; x.font = "500 26px 'IBM Plex Sans', system-ui, sans-serif"; x.fillText("joelgra08.github.io/plan-summit", P, H - 40);
   return await new Promise(r => c.toBlob(r, "image/png"));
 }
-async function objDescargar(cual){
+async function objDescargar(offset){
   const msg = document.getElementById("objMsg");
-  const day = cual === "hoy" ? DAYS.find(d => d.d === TODAY) : DAYS.find(d => d.d > TODAY);
-  if (!day) { msg.textContent = cual === "hoy" ? "Hoy no es día de trabajo en el plan." : "No hay más días en el plan."; return; }
+  const day = DAYS[SEL + offset];
+  if (!day) { msg.textContent = "No hay más días en el plan."; return; }
   const btns = document.querySelectorAll(".objbar button"); btns.forEach(b => b.disabled = true); msg.textContent = "Armando la imagen…";
   try {
     const man = new Date(); man.setDate(man.getDate() + 1);
-    const titulo = cual === "hoy" ? "Objetivos de hoy" : day.d === iso(man) ? "Objetivos de mañana" : "Objetivos del próximo día de trabajo";
+    const titulo = day.d === TODAY ? "Objetivos de hoy" : day.d === iso(man) ? "Objetivos de mañana" : "Objetivos del día";
     const blob = await objImagen(day, titulo);
+    if (REDRAW) setDay(DAYS[SEL]);
     const name = `Objetivos ${day.d.split("-").reverse().join("-")}.png`;
     const file = new File([blob], name, {type:"image/png"});
     if (navigator.canShare && navigator.canShare({files:[file]}) && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
@@ -466,11 +536,12 @@ async function objDescargar(cual){
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
       msg.textContent = `Descargada: ${name}`;
     }
-  } catch (err) { if (err && err.name !== "AbortError") msg.textContent = "No se pudo armar la imagen en este navegador."; else msg.textContent = "Imagen lista para mandar por WhatsApp"; }
+  } catch (err) { msg.textContent = err && err.name !== "AbortError" ? "No se pudo armar la imagen en este navegador." : "Imagen para mandar por WhatsApp"; }
   btns.forEach(b => b.disabled = false);
+  verDia(SEL);
 }
-document.getElementById("btnObjHoy").addEventListener("click", () => objDescargar("hoy"));
-document.getElementById("btnObjManana").addEventListener("click", () => objDescargar("manana"));
+document.getElementById("btnObj").addEventListener("click", () => objDescargar(0));
+document.getElementById("btnObjSig").addEventListener("click", () => objDescargar(1));
 main();
 </script>
 
