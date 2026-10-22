@@ -335,7 +335,7 @@ function initViewer(){
   return () => { controls.update(); renderer.render(scene, camera); };
 }
 function main(){
-  DAYS.forEach((d, i) => d.tasks.forEach(tk => { if (tk[1].includes("{SIG}")) { const n = DAYS[i+1]; tk[1] = tk[1].replace("{SIG}", n ? fdate(n.d) : "día siguiente"); } }));
+  DAYS.forEach((d, i) => { d.tasks = d.tasks.map(tk => { if (!tk[1].includes("{SIG}")) return tk; const n = DAYS[i+1]; return [tk[0], tk[1].replace("{SIG}", n ? fdate(n.d) : "día siguiente")]; }); });
   let draw = null;
   try { if (window.THREE) draw = initViewer(); } catch (err) { draw = null; }
   if (!draw) document.getElementById("stage").innerHTML = '<p style="padding:20px">La vista 3D no se pudo abrir en este navegador. El plan día por día está más abajo.</p>';
