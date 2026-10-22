@@ -148,6 +148,7 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
     <li>Herrería: entra y termina S1 (7 h) y sigue de largo a S2 el mismo día; S2 (9 h con la escalera) termina al día siguiente, mientras se llena S1. Ese día previo a S1 la gente se enfoca en tapar S2. Encofrado de losa: S1 en 1–2 días, S2 en 2 días, S3 parcial y se termina al subir los tableros. S3: la herrería entra al día siguiente de subir los tableros (7 h) y se llena al otro día. Una cuadrilla de herrería, un sector por vez. Si algo se atrasa, todo lo que viene después se corre esos días y el orden no cambia.</li>
     <li>Tandas del piso tipo: 1) S1 menos F07 · 2) F07, núcleo, E09, D09, C09, C09A, T01 asc. · 2b) pata, C07, C08 (con la losa S3) · 3) T02 asc. sup., C04, D04A, E06 · 4) C06, C05, E05, T04.</li>
     <li>El viernes 30/10 no se hormigona nada (víspera de fin de semana largo): ese día se adelanta herrería y encofrado, y la tanda 4 pasa al martes 3/11.</li>
+    <li>Antes de la licencia: la losa N113 S3 pasa al lunes 21/12; el martes 22/12 se llenan la tanda 3 y C06, C05 y T04; E05 queda para el lunes 11/1.</li>
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
@@ -261,6 +262,23 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
     out.push({ ...day, d:WDAYS[p++] });
   }
   DAYS.length = 0; out.forEach(d => DAYS.push(d));
+})();
+// Ajustes puntuales pedidos en obra
+(function ajustes(){
+  const at = d => DAYS.find(x => x.d === d);
+  // Losa N113 S3 pasa del vie 18/12 al lun 21/12; tanda 3 + parte de la tanda 4 el 22/12; E05 a la vuelta de la licencia
+  const v18 = at("2026-12-18"), l21 = at("2026-12-21"), m22 = at("2026-12-22"), e11 = at("2027-01-11");
+  if (v18 && l21 && m22 && e11 && (v18.what || "").startsWith("Losa N113 S3")) {
+    const s3 = { ...v18 }, t3 = { ...l21 }, t4 = { ...m22 };
+    Object.assign(v18, { o45:0, o35:0, what:"", base:{3:"steel"}, vert:{...t3.vert, ...Object.fromEntries(Object.keys(s3.vert).filter(k => s3.vert[k] === "pour").map(k => [k, "pend"]))},
+      tasks:[...s3.tasks.filter(x => x[0] !== "pour"), ["nopour","Sin llenado (la losa S3 pasa al lunes 21/12)"]] });
+    Object.assign(l21, { o45:s3.o45, o35:s3.o35, what:s3.what, base:s3.base, vert:s3.vert, slab:s3.slab, lvl:s3.lvl, tasks:s3.tasks });
+    const parte4 = ["C06","C05","T04 fachada der."];
+    Object.assign(m22, { o45:9.3 + 9.3, what:"Tanda 3 + C06, C05, T04", vert:{...t3.vert, ...pour(parte4)}, slab:t3.slab, lvl:t3.lvl,
+      tasks:[...t3.tasks.filter(x => x[0] !== "pour"), ["pour",`17 h: tanda 3: ${TXT[3]}`], ["pour","17 h: C06, C05 y T04 (de la tanda 4; E05 queda para el 11/1)"]] });
+    e11.tasks = [...e11.tasks.filter(x => x[0] !== "nopour"), ["pour","17 h: E05 (pasó del 22/12; el encofrado de 2,00 viene de E06)"]];
+    e11.o45 = 1.2; e11.what = "E05";
+  }
 })();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
