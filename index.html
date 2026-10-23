@@ -199,11 +199,12 @@ details.sup .notes{margin-top:10px}
     <li>Tandas del piso tipo: 1) S1 menos F07 · 2) F07, núcleo, E09, D09, C09, C09A, T01 asc. · 2b) pata, C07, C08 (con la losa S3) · 3) T02 asc. sup., C04, D04A, E06 · 4) C06, C05, E05, T04.</li>
     <li>El viernes 30/10 no se hormigona nada (víspera de fin de semana largo): ese día se adelanta herrería y encofrado, y la tanda 4 pasa al martes 3/11.</li>
     <li>Antes de la licencia: la losa N113 S3 pasa al lunes 21/12; el martes 22/12 se llenan la tanda 3 y C06, C05 y T04; E05 queda para el lunes 11/1.</li>
+    <li>Losa N110: esquina retranqueada en S2 (6,6 m³ menos), descensos de losa y una escalera nueva con su viga y pilar (1,74 m³ C35). El encofrado de S2 arranca un día antes (3 días en lugar de 2) y los fondos de los descensos se preparan el día anterior. C09A queda en doble altura y se llena en dos etapas, como siempre. N111 vuelve a la planta tipo.</li>
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.0.1</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.0.2</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -329,6 +330,20 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
       tasks:[...t3.tasks.filter(x => x[0] !== "pour"), ["pour",`17 h: tanda 3: ${TXT[3]}`], ["pour","17 h: C06, C05 y T04 (de la tanda 4; E05 queda para el 11/1)"]] });
     e11.tasks = [...e11.tasks.filter(x => x[0] !== "nopour"), ["pour","17 h: E05 (pasó del 22/12; el encofrado de 2,00 viene de E06)"]];
     e11.o45 = 1.2; e11.what = "E05";
+  }
+  // Losa N110: retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35). El encofrado de S2 arranca un día antes.
+  const conTarea = s => DAYS.find(x => x.tasks.some(tk => tk[1].startsWith(s)));
+  const prep = conTarea("Losa N109 S3: entra y termina la herrería");
+  const e1 = conTarea("Losa N110 S1: encofrado"), e2 = conTarea("Losa N110 S2: encofrado (día 1 de 2)"), e3 = conTarea("Losa N110 S2: terminar de tapar");
+  const s2 = DAYS.find(x => x.what === "Losa N110 S2 + tanda 1");
+  if (prep && e1 && e2 && e3 && s2) {
+    prep.tasks.splice(1, 0, ["form","Losa N110 S2: dejar armados los fondos y costados de los descensos y de la escalera nueva"]);
+    e1.tasks.splice(1, 0, ["form","Losa N110 S2: arrancar el encofrado por el retranqueo, los descensos y la escalera nueva (día 1 de 3)"]);
+    e2.tasks = e2.tasks.map(tk => tk[1] === "Losa N110 S2: encofrado (día 1 de 2)" ? ["form","Losa N110 S2: encofrado (día 2 de 3)"] : tk);
+    e3.tasks = e3.tasks.map(tk => tk[0] === "steel" ? [tk[0], tk[1] + " (avisar: la escalera nueva y los descensos suman herrería en S2)"] : tk);
+    [e1, e2, e3].forEach(d => d.slab = {...d.slab, 2:"form"});
+    s2.o35 = 67.8;
+    s2.tasks = s2.tasks.map(tk => tk[1].startsWith("17 h: llenar losa N110 Sector 2") ? ["pour","17 h: llenar losa N110 Sector 2 (con retranqueo: 6,6 m³ menos) + escalera de siempre + escalera nueva con su viga y pilar (1,74 m³)"] : tk);
   }
 })();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
