@@ -205,7 +205,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.0.8</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.0.9</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -247,7 +247,7 @@ const DAYS = [
  { d:WDAYS[2], lvl:"Losa N108 + tableros de S3", base:{}, vert:{...done(before,HOY,PATA)}, slab:{1:"steel",2:"form"},
    tasks:[["steel","Losa N108 S1: entra y termina la herrería (7 h) y sigue de largo a S2"],["form","Losa N108 S2: terminar de tapar, con toda la gente"],["vert","Armar los tableros de los pilares de S3 (se llenan el viernes)"],["nopour","Sin llenado"]], o45:0, o35:0, what:"" },
  { d:WDAYS[3], lvl:"Losa N108 S1 + pilares de S3", base:{}, vert:{...done(before,HOY,PATA),...pour(S3V)}, slab:{1:"pour",2:"steel",3:"formPart"},
-   tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: la herrería termina mientras se llena S1"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, E05, T02 asc. sup., C04, T04 (D04A pasa al lunes)"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
+   tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: quedó la malla base; faltan los cierres de viga y los hierros de vigas (pasa al lunes)"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, E05, T02 asc. sup., C04, T04 (D04A pasa al lunes)"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
 ];
 // Ciclo de 7 días hábiles (≈3 losas por mes). Día A = llenado de losa S1.
 // A+1 suben los tableros de S3 a S1 y se termina el encofrado de S3; A+2 herrería S3; A+3 se llena S3.
@@ -264,7 +264,7 @@ for (let g = 0; 108 + g < LAST; g++) {
   const O = [
     { base:{2:"pour",3:"form"}, vert: g === 0 ? {...pour(byT(1).filter(c => c !== "G08"))} : {...pour(byT(1))}, slab:{},
       tasks: g === 0
-        ? [UP,["form",`Losa N${L} S3: terminar el encofrado (menos alrededor de D04A)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour","17 h: tanda 1 sobre la losa S1: F09, G09, G07, H09, T02 asc. inf., T05 (G08 pasa al martes)"],["pour","17 h: D04A, al final (pasó del viernes; usa el encofrado de 1,80)"]]
+        ? [UP,["form",`Losa N${L} S2: a primera hora, terminar los cierres de viga`],["steel",`Losa N${L} S2: la herrería termina los hierros de vigas (la malla base ya está)`],["form",`Losa N${L} S3: terminar el encofrado (menos alrededor de D04A)`],["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour","17 h: tanda 1 sobre la losa S1: F09, G09, G07, H09, T02 asc. inf., T05 (G08 pasa al martes)"],["pour","17 h: D04A, al final (pasó del viernes; usa el encofrado de 1,80)"]]
         : [UP,["form",`Losa N${L} S3: terminar el encofrado (con los tableros ya en S1)`],
              ["pour",`17 h: llenar losa N${L} Sector 2 (con la escalera) con bomba`],["pour",`17 h: tanda 1 sobre la losa S1: ${TXT[1]}`]], o45:18.5, o35:72.7, what:`Losa N${L} S2 + tanda 1` },
     { base:{3:"steel"}, vert: g === 0 ? {...done(byT(1).filter(c => c !== "G08")),...pour(byT(2).concat(["G08"]))} : {...done(tandas(2)),...pour(byT(2))}, slab:{},
