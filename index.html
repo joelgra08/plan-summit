@@ -205,7 +205,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.1.1</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.1.0</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -328,13 +328,13 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
     l26.tasks = [...l26.tasks.filter(x => x[0] !== "pour"), ["pour","17 h: llenar losa N108 Sector 2 con bomba (la escalera queda para mañana)"],
       ["pour","17 h: G07, T02 asc. inf., H09, G09 y F09 sobre la losa S1 (T05, G08 y F07 pasan a mañana)"], ["pour","17 h: D04A de N107, al final"]];
     m27.vert = {...done(S1hoy), ...pour(S1man)}; m27.o45 = 6.5; m27.o35 = 1.8; m27.what = "S1 completo + escalera N108";
-    m27.tasks = [...m27.tasks.filter(x => x[0] !== "pour" && x[0] !== "steel"), ["steel","Losa N108 S3: con suerte, la herrería entra a la tarde"], ["pour","17 h: T05, G08 y F07: se completa S1"], ["pour","17 h: escalera de N108 (pasó del lunes)"]];
-    x28.vert = {...done(S1hoy, S1man), ...pour(["T01 escalera nucleo"])}; x28.o45 = 10.8; x28.o35 = 0; x28.what = "Núcleo T01"; x28.base = {3:"steel"};
+    m27.tasks = [...m27.tasks.filter(x => x[0] !== "pour"), ["pour","17 h: T05, G08 y F07: se completa S1"], ["pour","17 h: escalera de N108 (pasó del lunes)"]];
+    x28.vert = {...done(S1hoy, S1man), ...pour(["T01 escalera nucleo"])}; x28.o45 = 10.8; x28.o35 = 45.3; x28.what = "Losa N108 S3 + núcleo T01";
     x28.slab = {1:"form"};
-    x28.tasks = [["steel","Losa N108 S3: herrería (7 h; termina hoy si entró ayer a la tarde)"], ["form","Losa N109 S1: encofrado (los pilares de S1 ya están desencofrados)"], ["pour","17 h: núcleo T01 de la escalera (va sobre la losa S2, no depende de S3)"]];
-    j29.vert = {...done(S1hoy, S1man, ["T01 escalera nucleo"]), ...pour(S2resto)}; j29.o45 = 12.6; j29.o35 = 45.3; j29.what = "Losa N108 S3 + E09, D09, C09, C09A, T01 asc."; j29.base = {3:"pour"};
+    x28.tasks = [["form","Losa N109 S1: encofrado (los pilares de S1 ya están desencofrados)"], ["pour","17 h: llenar losa N108 Sector 3 con bomba"], ["pour","17 h: núcleo T01 de la escalera"]];
+    j29.vert = {...done(S1hoy, S1man, ["T01 escalera nucleo"]), ...pour(S2resto)}; j29.o45 = 12.6; j29.o35 = 0; j29.what = "E09, D09, C09, C09A, T01 asc.";
     j29.slab = {1:"form"};
-    j29.tasks = [["form","Losa N109 S1: terminar el encofrado"], ["pour","17 h: llenar losa N108 Sector 3 con bomba (pasó del miércoles)"], ["pour","17 h: E09, D09, C09, C09A y T01 asc. (quedan pata, C07 y C08)"]];
+    j29.tasks = [["form","Losa N109 S1: terminar el encofrado"], ["pour","17 h: E09, D09, C09, C09A y T01 asc. (quedan pata, C07 y C08)"]];
     const v30 = at("2026-10-30");
     if (v30) { v30.slab = {1:"steel"}; v30.vert = {...j29.vert, ...Object.fromEntries(S2resto.map(c => [c, "done"]))};
       v30.tasks = [["nopour","Sin hormigón: día previo a fin de semana largo"], ["steel","Losa N109 S1: entra y termina la herrería (7 h)"], ["rec","Día ideal para desencofrar material de losa"]]; }
