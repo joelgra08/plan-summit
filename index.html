@@ -70,6 +70,9 @@ ul.tasks li{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:base
 .objbar button.alt{background:transparent;color:var(--fg);border-color:var(--line)}
 .objbar button:focus-visible{outline:2px solid var(--pour);outline-offset:2px}
 .objbar button:disabled{opacity:.6;cursor:progress}
+.objbar .aplan{margin-left:auto;font-size:12.5px;color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--line)}
+.objbar .aplan:hover{color:var(--fg)}
+.v3d .tip{position:absolute;pointer-events:none;background:var(--fg);color:var(--bg);font:600 12.5px var(--body);padding:5px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-130%);box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:2}
 .objbar .msg{font-size:13px;color:var(--muted)}
 .topbar{background:#33383b;color:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .topbar img{width:26px;height:26px;border-radius:6px;display:block}
@@ -157,6 +160,7 @@ details.sup .notes{margin-top:10px}
       <button type="button" id="btnObj">Descargar objetivos</button>
       <button type="button" id="btnObjSig" class="alt">Descargar objetivos día siguiente</button>
       <span class="msg" id="objMsg">Imagen para mandar por WhatsApp</span>
+      <a class="aplan" id="lnkPlan" href="#" target="_blank" rel="noopener noreferrer" title="Pasa todo lo de este día al Plan del día de Control de Hormigón (pide confirmación allá)">→ Plan</a>
     </div>
   </div>
 </article>
@@ -173,7 +177,7 @@ details.sup .notes{margin-top:10px}
 <section style="display:grid;gap:10px">
   <h2>Pedidos a Cielo Azul · próximos 15 días hábiles</h2>
   <div class="tw"><table>
-    <thead><tr><th>Fecha</th><th>Qué se llena</th><th class="n">C45 (grúa)</th><th class="n">C35 (bomba)</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Qué se llena</th><th class="n">C45 (grúa)</th><th class="n">C35</th></tr></thead>
     <tbody id="orders"></tbody>
   </table></div>
 </section>
@@ -203,7 +207,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.2.0</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.0</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -248,8 +252,8 @@ const DAYS = [
    tasks:[["vert","Pilares de S3: quedan armados hasta el {SIG} a primera hora"],["steel","Losa N108 S2: quedó la malla base; faltan los cierres de viga y los hierros de vigas (pasa al lunes)"],["form","Losa N108 S3: encofrado parcial: pasillos y zonas libres (los tableros de S3 siguen parados)"],["pour","17 h: llenar losa N108 Sector 1 con bomba"],["pour","17 h: pilares de S3 con grúa: C06, C05, E06, E05, T02 asc. sup., C04, T04 (D04A pasa al lunes)"]], o45:18.6, o35:51.8, what:"Losa N108 S1 + pilares S3" },
 ];
 // Semana del 26/10 (ya acordada en obra)
-const SEM26 = [{"d": "2026-10-26", "lvl": "Losa N108 + verticales N108 → N109", "base": {"2": "pour", "3": "form"}, "vert": {"G07": "pour", "T02 asc. inf. izq.": "pour", "H09": "pour", "G09": "pour", "F09": "pour"}, "slab": {}, "tasks": [["vert", "A primera hora: desencofrar verticales de S3 y subir directo a la losa S1"], ["form", "Losa N108 S2: a primera hora, terminar los cierres de viga"], ["steel", "Losa N108 S2: la herrería termina los hierros de vigas (la malla base ya está)"], ["form", "Losa N108 S3: terminar el encofrado (menos alrededor de D04A)"], ["pour", "17 h: llenar losa N108 Sector 2 con bomba (la escalera queda para mañana)"], ["pour", "17 h: G07, T02 asc. inf., H09, G09 y F09 sobre la losa S1 (T05, G08 y F07 pasan a mañana)"], ["pour", "17 h: D04A de N107, al final"]], "o45": 14.4, "o35": 70.9, "what": "Losa N108 S2 + G07, T02, H09, G09, F09"}, {"d": "2026-10-27", "lvl": "Losa N108 + verticales N108 → N109", "base": {"3": "steel"}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "pour", "G08": "pour", "F07": "pour"}, "slab": {}, "tasks": [["form", "Losa N108 S3: cerrar el encofrado alrededor de D04A (a primera hora)"], ["steel", "Losa N108 S3: entra y termina la herrería (7 h)"], ["pour", "17 h: T05, G08 y F07: se completa S1"], ["pour", "17 h: escalera de N108 (pasó del lunes)"]], "o45": 6.5, "o35": 1.8, "what": "S1 completo + escalera N108"}, {"d": "2026-10-28", "lvl": "Losa N108 + verticales N108 → N109", "base": {"3": "pour"}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "pour"}, "slab": {"1": "form"}, "tasks": [["form", "Losa N109 S1: encofrado (los pilares de S1 ya están desencofrados)"], ["pour", "17 h: llenar losa N108 Sector 3 con bomba"], ["pour", "17 h: núcleo T01 de la escalera"]], "o45": 10.8, "o35": 45.3, "what": "Losa N108 S3 + núcleo T01"}, {"d": "2026-10-29", "lvl": "Verticales N108 → N109 · cota +26,88 + losa N109", "base": {}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "done", "E09": "pour", "D09": "pour", "C09": "pour", "C09A": "pour", "T01 asc. sup. izq.": "pour"}, "slab": {"1": "form"}, "tasks": [["form", "Losa N109 S1: terminar el encofrado"], ["pour", "17 h: E09, D09, C09, C09A y T01 asc. (quedan pata, C07 y C08)"]], "o45": 12.6, "o35": 0, "what": "E09, D09, C09, C09A, T01 asc."}, {"d": "2026-10-30", "lvl": "Verticales N108 → N109 · cota +26,88 + losa N109", "base": {}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "done", "E09": "done", "D09": "done", "C09": "done", "C09A": "done", "T01 asc. sup. izq.": "done"}, "slab": {"1": "steel"}, "tasks": [["nopour", "Sin hormigón: día previo a fin de semana largo"], ["steel", "Losa N109 S1: entra y termina la herrería (7 h)"], ["rec", "Día ideal para desencofrar material de losa"]], "o45": 0, "o35": 0, "what": ""}];
-DAYS.forEach(d => d.vfl = 107);
+const SEM26 = [{"d": "2026-10-26", "lvl": "Losa N108 + verticales N108 → N109", "base": {"2": "pour", "3": "form"}, "vert": {"G07": "pour", "T02 asc. inf. izq.": "pour", "H09": "pour", "G09": "pour", "F09": "pour"}, "slab": {}, "tasks": [["vert", "A primera hora: desencofrar verticales de S3 y subir directo a la losa S1"], ["form", "Losa N108 S2: a primera hora, terminar los cierres de viga"], ["steel", "Losa N108 S2: la herrería termina los hierros de vigas (la malla base ya está)"], ["form", "Losa N108 S3: terminar el encofrado (menos alrededor de D04A)"], ["pour", "17 h: llenar losa N108 Sector 2 con bomba (la escalera queda para mañana)"], ["pour", "17 h: G07, T02 asc. inf., H09, G09 y F09 sobre la losa S1 (T05, G08 y F07 pasan a mañana)"], ["pour", "17 h: D04A de N107, al final"]], "o45": 14.4, "o35": 70.9, "what": "Losa N108 S2 + G07, T02, H09, G09, F09"}, {"d": "2026-10-27", "lvl": "Losa N108 + verticales N108 → N109", "base": {"3": "steel"}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "pour", "G08": "pour", "F07": "pour"}, "slab": {}, "tasks": [["form", "Losa N108 S3: cerrar el encofrado alrededor de D04A (a primera hora)"], ["steel", "Losa N108 S3: entra y termina la herrería (7 h)"], ["pour", "17 h: T05, G08 y F07: se completa S1"], ["pour", "17 h: escalera de N108 con grúa, 2 tachos (pasó del lunes)"]], "o45": 6.5, "o35": 1.8, "what": "S1 completo + escalera N108"}, {"d": "2026-10-28", "lvl": "Losa N108 + verticales N108 → N109", "base": {"3": "pour"}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "pour"}, "slab": {"1": "form"}, "tasks": [["form", "Losa N109 S1: encofrado (los pilares de S1 ya están desencofrados)"], ["pour", "17 h: llenar losa N108 Sector 3 con bomba"], ["pour", "17 h: núcleo T01 de la escalera"]], "o45": 10.8, "o35": 45.3, "what": "Losa N108 S3 + núcleo T01"}, {"d": "2026-10-29", "lvl": "Verticales N108 → N109 · cota +26,88 + losa N109", "base": {}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "done", "E09": "pour", "D09": "pour", "C09": "pour", "C09A": "pour", "T01 asc. sup. izq.": "pour"}, "slab": {"1": "form"}, "tasks": [["form", "Losa N109 S1: terminar el encofrado"], ["pour", "17 h: E09, D09, C09, C09A y T01 asc. (quedan pata, C07 y C08)"]], "o45": 12.6, "o35": 0, "what": "E09, D09, C09, C09A, T01 asc."}, {"d": "2026-10-30", "lvl": "Verticales N108 → N109 · cota +26,88 + losa N109", "base": {}, "vert": {"G07": "done", "T02 asc. inf. izq.": "done", "H09": "done", "G09": "done", "F09": "done", "T05 fachada inf.": "done", "G08": "done", "F07": "done", "T01 escalera nucleo": "done", "E09": "done", "D09": "done", "C09": "done", "C09A": "done", "T01 asc. sup. izq.": "done"}, "slab": {"1": "steel"}, "tasks": [["nopour", "Sin hormigón: día previo a fin de semana largo"], ["steel", "Losa N109 S1: entra y termina la herrería (7 h)"], ["rec", "Día ideal para desencofrar material de losa"]], "o45": 0, "o35": 0, "what": ""}];
+DAYS.forEach(d => { d.vfl = 107; d.baseN = 107; d.upN = 108; });
 SEM26.forEach((d, i) => DAYS.push({ ...d, d: WDAYS[4 + i], vfl:108, baseN:108, upN:109 }));
 
 // Ciclo de 8 días hábiles por piso (≈2,6 losas por mes), desde el mar 3/11.
@@ -295,7 +299,7 @@ for (let g = 0; 109 + g <= LAST; g++) {
   ];
   if (!ult) O.push({ k:8, upN:L+1, baseN:L, base:{}, vert:vstate("v8"), slab:{1:"steel"}, lvl:vB,
       tasks:[["form",`Losa N${L+1} S1: terminar el encofrado a primera hora`],["steel",`Losa N${L+1} S1: herrería (7 h)`],["pour",`17 h: ${TXTV.v8}`]], o45:M3("v8"), o35:0, what:"E09, D09, C09, T01 asc." });
-  O.forEach((o, i) => DAYS.push({ ...o, fl:L, vfl: o.k <= 3 ? L - 1 : L, d:WDAYS[s + i] }));
+  O.forEach((o, i) => DAYS.push({ ...o, fl:L, vfl: o.k <= 3 ? L - 1 : L, d:WDAYS[s + i], ...(o.k === 5 ? { esc:{ n:L - 1, b:1 } } : {}) }));
 }
 // Días en que no se hormigona losa (víspera de fin de semana largo). A lo sumo pilares a la mañana.
 const SIN_HORMIGON = new Set(["2026-10-30"]);
@@ -324,6 +328,9 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
 })();
 // Ajustes puntuales pedidos en obra
 (function ajustes(){
+  // Pases puntuales a la app: escalera de N108 con grúa (27/10) y D04A de N107 (26/10)
+  const e27 = DAYS.find(x => x.d === "2026-10-27"); if (e27) e27.esc = { n:107, b:0 };
+  const l26 = DAYS.find(x => x.d === "2026-10-26"); if (l26) l26.xv = [{ c:"D04A", n:107 }];
   // Losa N110: retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35). S2 resta 7,94 m³. El encofrado de S2 arranca un día antes.
   const d1 = DAYS.find(x => x.fl === 110 && x.k === 1), d2 = DAYS.find(x => x.fl === 110 && x.k === 2), d3 = DAYS.find(x => x.fl === 110 && x.k === 3);
   const d5 = DAYS.find(x => x.fl === 110 && x.k === 5), pr = DAYS.find(x => x.fl === 109 && x.k === 8), d4 = DAYS.find(x => x.fl === 110 && x.k === 4);
@@ -332,12 +339,13 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
     d1.tasks = d1.tasks.map(x => x[1].startsWith("Losa N110 S2: encofrado de las zonas libres") ? ["form","Losa N110 S2: arrancar por el retranqueo, los descensos y la escalera nueva (día 1 de 3)"] : x);
     d2.tasks = d2.tasks.map(x => x[1].startsWith("Losa N110 S2: encofrado (día 1 de 2)") ? ["form","Losa N110 S2: encofrado (día 2 de 3) y escaleras"] : x);
     d4.tasks = d4.tasks.map(x => x[0] === "steel" ? [x[0], x[1] + " · avisar: la escalera nueva y los descensos suman herrería"] : x);
-    d5.o35 = 66.5;
+    d5.o35 = 66.5; d5.m3S = { 2: 62.93 }; d5.extra = [{ c:"Escalera nueva", t:"E", nom:"Escalera nueva", m:1.74, n:109, b:1 }];
     d5.tasks = d5.tasks.map(x => x[1].startsWith("17 h: llenar losa N110 Sector 2") ? ["pour","17 h: llenar losa N110 Sector 2 con las dos escaleras con bomba (retranqueo y hueco: 7,94 m³ menos; escalera nueva 1,74 m³)"] : x);
   }
 })();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
+const eq35 = v => v >= 9 ? "bomba" : "grúa";
 const fnum = n => n ? n.toFixed(1).replace(".", ",") : "—";
 const TASK_C = {pour:"var(--pour)",form:"var(--form)",steel:"var(--steel)",done:"var(--done)",rec:"var(--done)",vert:"#5f7d6c",nopour:"#7a1820",bomba:"#6b5b95"};
 const TASK_L = {pour:"Llenado",form:"Encofrado",steel:"Hierro",done:"Desencofrar",rec:"Desencofrado",vert:"Verticales",nopour:"Sin llenado",bomba:"Bomba"};
@@ -358,7 +366,7 @@ function build(){
   const cx = (Math.min(...all.map(p=>p[1])) + Math.max(...all.map(p=>p[1])))/2*S;
   const cz = -(Math.min(...all.map(p=>p[0])) + Math.max(...all.map(p=>p[0])))/2*S;
   const root = new THREE.Group(); root.position.set(-cx, 0, -cz); scene.add(root);
-  const add = (geo, key) => { const mesh = new THREE.Mesh(geo, mats.pend); const g = new THREE.Group(); g.add(mesh); g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), edge)); root.add(g); groups[key] = {g, mesh}; };
+  const add = (geo, key) => { const mesh = new THREE.Mesh(geo, mats.pend); const g = new THREE.Group(); g.add(mesh); g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), edge)); root.add(g); mesh.userData.key = key; groups[key] = {g, mesh}; };
   DATA.sl.forEach((s,i) => add(prism(s.p, E, -E), "b"+(i+1)));
   DATA.els.forEach(e => { if (e.t !== "E") add(prism(e.p, H, 0), "v:"+e.c); });
   DATA.sl.forEach((s,i) => add(prism(s.p, E, H), "s"+(i+1)));
@@ -388,6 +396,48 @@ function setDay(day){
     groups["eb" + i].g.visible = bs; groups["eb" + i].mesh.material = mats[day.base[2] === "pour" ? "pour" : "esc"];
   });
 }
+// Etiqueta de cada elemento: cursor en PC, un toque corto en el celular
+const TIPO = { P:"Pilar", PA:"Pantalla", E:"Escalera" };
+const M3SL = { 1:51.8, 2:70.9, 3:45.3 };
+function etiqueta(key) {
+  const d = DAYS[SEL] || {};
+  const m = s => String(Math.round(s * 100) / 100).replace(".", ",");
+  if (key.startsWith("v:")) {
+    const e = DATA.els.find(x => x.c === key.slice(2)); if (!e) return "";
+    const nom = e.c.startsWith("T01 escalera") ? (e.c.includes("pata") ? "Núcleo T01 (pata)" : "Núcleo T01") : `${TIPO[e.t] || ""} ${e.c}`;
+    return `N${d.vfl} ${nom} · ${m(e.m3)} m³`;
+  }
+  const r = /^([sb])(\d)(r?)$/.exec(key);
+  if (r) { const n = r[1] === "s" ? d.upN : d.baseN, k = +r[2]; const v = (n === 110 && k === 2) ? 62.9 : M3SL[k]; return `Losa N${n} S${k} · ${m(v)} m³${k === 2 ? " + escalera" : ""}`; }
+  if (key.startsWith("eu") || key.startsWith("eb")) return "Escalera nueva N110 · 1,74 m³";
+  return "";
+}
+function initTip(){
+  const stage = document.getElementById("stage");
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; stage.parentNode.appendChild(tip);
+  const ray = new THREE.Raycaster(), v = new THREE.Vector2();
+  const pick = (cx, cy) => {
+    const r = renderer.domElement.getBoundingClientRect();
+    v.x = ((cx - r.left) / r.width) * 2 - 1; v.y = -((cy - r.top) / r.height) * 2 + 1;
+    ray.setFromCamera(v, camera);
+    const ms = Object.values(groups).filter(g => g.g.visible && g.mesh.visible).map(g => g.mesh);
+    const hit = ray.intersectObjects(ms, false)[0];
+    return hit ? etiqueta(hit.object.userData.key) : "";
+  };
+  const show = (txt, cx, cy) => {
+    if (!txt) { tip.hidden = true; return; }
+    const r = stage.parentNode.getBoundingClientRect();
+    tip.textContent = txt; tip.style.left = (cx - r.left) + "px"; tip.style.top = (cy - r.top) + "px"; tip.hidden = false;
+  };
+  let down = null;
+  renderer.domElement.addEventListener("pointermove", ev => { if (ev.pointerType === "mouse" && !ev.buttons) show(pick(ev.clientX, ev.clientY), ev.clientX, ev.clientY); else if (down && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) > 6) tip.hidden = true; });
+  renderer.domElement.addEventListener("pointerleave", () => { tip.hidden = true; });
+  renderer.domElement.addEventListener("pointerdown", ev => { down = { x:ev.clientX, y:ev.clientY, t:Date.now() }; });
+  renderer.domElement.addEventListener("pointerup", ev => {
+    if (ev.pointerType !== "mouse" && down && Date.now() - down.t < 400 && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) < 6) show(pick(ev.clientX, ev.clientY), ev.clientX, ev.clientY);
+    down = null;
+  });
+}
 function homeCam(){ camera.position.set(16, 44, 50); camera.lookAt(0, 0, 2); if (controls) controls.target.set(0, 0, 2); }
 function initViewer(){
   const stage = document.getElementById("stage");
@@ -403,6 +453,22 @@ function initViewer(){
   return () => { controls.update(); renderer.render(scene, camera); };
 }
 let SEL = 0, REDRAW = null;
+// Lo que se llena ese día, en el idioma del plano de Control de Hormigón
+function itemsPlan(d) {
+  const it = [];
+  [1,2,3].forEach(k => { if (d.slab[k] === "pour") it.push({ c:`Sector ${k}`, n:d.upN, b:1 }); });
+  [1,2,3].forEach(k => { if (d.base[k] === "pour") it.push({ c:`Sector ${k}`, n:d.baseN, b:1, ...(d.m3S && d.m3S[k] ? { m:d.m3S[k] } : {}) }); });
+  if (d.esc) it.push({ c:"Escalera", n:d.esc.n, b:d.esc.b });
+  (d.extra || []).forEach(x => it.push(x));
+  Object.entries(d.vert).forEach(([c, st]) => { if (st === "pour") it.push({ c, n:d.vfl, b:0 }); });
+  (d.xv || []).forEach(x => it.push({ ...x, b:0 }));
+  return it;
+}
+function linkPlan(d) {
+  const json = JSON.stringify({ v:1, fecha:d.d, items:itemsPlan(d) });
+  const b64 = btoa(unescape(encodeURIComponent(json))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return "https://joelgra08.github.io/control-hormigon/?importarPlan=" + b64;
+}
 function verDia(i){
   SEL = Math.max(0, Math.min(DAYS.length - 1, i));
   const d = DAYS[SEL];
@@ -411,9 +477,10 @@ function verDia(i){
   document.getElementById("selHoy").innerHTML = d.d === TODAY ? '<span class="today-tag">Hoy</span>' : "";
   document.getElementById("selLvl").textContent = d.lvl;
   document.getElementById("selTasks").innerHTML = d.tasks.map(([k,t]) => `<li><span class="chip" style="--c:${TASK_C[k]}">${TASK_L[k]}</span><span>${t}</span></li>`).join("");
-  const ord = [d.o45 ? `<span><b>C45</b> · ${fnum(d.o45)} m³ · grúa</span>` : "", d.o35 ? `<span><b>C35</b> · ${fnum(d.o35)} m³ · bomba</span>` : ""].join("") || `<span class="none">Sin pedido</span>`;
+  const ord = [d.o45 ? `<span><b>C45</b> · ${fnum(d.o45)} m³ · grúa</span>` : "", d.o35 ? `<span><b>C35</b> · ${fnum(d.o35)} m³ · ${eq35(d.o35)}</span>` : ""].join("") || `<span class="none">Sin pedido</span>`;
   document.getElementById("selOrder").innerHTML = `<span class="dtag" style="width:100%">Pedido Cielo Azul</span>${ord}`;
   document.getElementById("fechaSel").value = d.d;
+  document.getElementById("lnkPlan").href = linkPlan(d);
   document.getElementById("btnM2").disabled = SEL < 2;
   document.getElementById("btnM1").disabled = SEL < 1;
   document.getElementById("btnP1").disabled = SEL > DAYS.length - 2;
@@ -447,7 +514,7 @@ function main(){
   fs.addEventListener("change", () => { if (!fs.value) return; const k = DAYS.findIndex(d => d.d >= fs.value); verDia(k < 0 ? DAYS.length - 1 : k); });
 
   document.getElementById("orders").innerHTML = WIN.filter(d => d.o45 || d.o35).map(d =>
-    `<tr class="${d.d === TODAY ? "today" : ""}"><td class="dt">${fdate(d.d)}</td><td>${d.what}</td><td class="n">${fnum(d.o45)}</td><td class="n">${fnum(d.o35)}</td></tr>`).join("");
+    `<tr class="${d.d === TODAY ? "today" : ""}"><td class="dt">${fdate(d.d)}</td><td>${d.what}</td><td class="n">${fnum(d.o45)}</td><td class="n">${fnum(d.o35)}${d.o35 && d.o35 < 9 ? " (grúa)" : ""}</td></tr>`).join("");
 
   // Calendario por nivel
   const fsel = pre => { const d = DAYS.find(x => (x.what || "").startsWith(pre)); return d ? fdate(d.d) : "—"; };
@@ -460,7 +527,7 @@ function main(){
   }
   document.getElementById("cal").innerHTML = rows.join("");
 
-  if (REDRAW) { homeCam(); const loop = () => { REDRAW(); requestAnimationFrame(loop); }; loop(); }
+  if (REDRAW) { try { initTip(); } catch (e) {} homeCam(); const loop = () => { REDRAW(); requestAnimationFrame(loop); }; loop(); }
   verDia(iHoy);
 }
 
@@ -505,7 +572,7 @@ async function objImagen(day, titulo){
   const chipW = 210, textW = W - 2*P - chipW - 20;
   const items = day.tasks.map(([k, txt]) => ({k, lines: objWrap(meas, txt, textW)}));
   const tasksH = items.reduce((a, it) => a + it.lines.length * 46 + 22, 0);
-  const ords = [day.o45 ? `C45 · ${fnum(day.o45)} m³ · grúa` : "", day.o35 ? `C35 · ${fnum(day.o35)} m³ · bomba` : ""].filter(Boolean);
+  const ords = [day.o45 ? `C45 · ${fnum(day.o45)} m³ · grúa` : "", day.o35 ? `C35 · ${fnum(day.o35)} m³ · ${eq35(day.o35)}` : ""].filter(Boolean);
   const H = 120 + 190 + (shot ? 700 : 0) + 70 + tasksH + 60 + 70 + Math.max(1, ords.length) * 50 + 110;
   const c = document.createElement("canvas"); c.width = W; c.height = H;
   const x = c.getContext("2d");
