@@ -207,7 +207,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.1</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.2</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -332,6 +332,19 @@ const RETRANQUEO = [110, 117];   // losas con esquina retranqueada, descensos y 
   // Pases puntuales a la app: escalera de N108 con grúa (27/10) y D04A de N107 (26/10)
   const e27 = DAYS.find(x => x.d === "2026-10-27"); if (e27) e27.esc = { n:107, b:0 };
   const l26 = DAYS.find(x => x.d === "2026-10-26"); if (l26) l26.xv = [{ c:"D04A", n:107 }];
+  // Real mar 27/10: se llenaron T05, G08 y la escalera; F07 pasa al miércoles con la losa S3 y el núcleo
+  const m27 = DAYS.find(x => x.d === "2026-10-27"), x28 = DAYS.find(x => x.d === "2026-10-28"), j29 = DAYS.find(x => x.d === "2026-10-29");
+  if (m27 && x28 && j29) {
+    delete m27.vert["F07"]; m27.o45 = 5.3; m27.what = "T05, G08 + escalera N108";
+    m27.tasks = m27.tasks.map(x => x[1].startsWith("17 h: T05, G08 y F07") ? ["pour","17 h: T05 y G08 (F07 pasa al miércoles)"] : x)
+      .map(x => x[0] === "steel" ? ["form","Losa N108 S3: terminar el encofrado (queda listo a la tarde)"] : x);
+    x28.vert = { ...x28.vert, F07:"pour" }; x28.o45 = 12.0; x28.what = "Losa N108 S3 + núcleo T01 + F07";
+    x28.tasks = [["steel","Losa N108 S3: la herrería entra a las 7 (7 h); controlar a media mañana para confirmar el pedido"],
+      ["form","Losa N109 S1: encofrado, dejando libre la zona de F07"],
+      ["pour","17 h (última hora): llenar losa N108 Sector 3 con bomba"], ["pour","17 h: núcleo T01 de la escalera y F07"]];
+    j29.vert = { ...j29.vert, F07:"done" };
+    j29.tasks = j29.tasks.map(x => x[1] === "Losa N109 S1: terminar el encofrado" ? ["form","Losa N109 S1: a primera hora cerrar alrededor de F07 y terminar el encofrado"] : x);
+  }
   // Losas con retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35): S2 resta 7,94 m³ y su encofrado arranca un día antes.
   RETRANQUEO.forEach(N => {
     const at = (fl, k) => DAYS.find(x => x.fl === fl && x.k === k);
