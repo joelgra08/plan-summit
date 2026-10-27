@@ -171,7 +171,7 @@ details.sup .notes{margin-top:10px}
   <span><i style="--c:var(--steel)"></i>Hierro</span>
   <span><i style="--c:var(--done)"></i>Ya llenado</span>
   <span><i style="--c:#d9ddd8"></i>Pendiente</span>
-  <span><i style="--c:#e2b93b"></i>Escalera nueva N110</span>
+  <span><i style="--c:#e2b93b"></i>Escalera nueva (N110 y N117)</span>
 </div>
 
 <section style="display:grid;gap:10px">
@@ -202,12 +202,12 @@ details.sup .notes{margin-top:10px}
     <li>Herrería, un sector por vez: S2 con la escalera en 9 h (entra el día 4 y termina el 5 a primera hora), S3 en 7 h (día 6), S1 del piso siguiente en 7 h (día 8). <b>La escalera se llena siempre con S2.</b></li>
     <li>Ciclo de 8 días: 1) losa S1 + pata, C07, C08, E06 · 2) T02 asc. sup., C04, D04A, C06, C05, E05 · 3) <b>T04 solo</b> · 4) F09, G07, G08, H09 · 5) losa S2 + escalera + G09, T02 asc. inf., F07 · 6) <b>T05 solo</b> · 7) losa S3 + núcleo T01 + C09A · 8) E09, D09, C09, T01 asc. T04 y T05 van solos; el núcleo T01 va con la losa S3 porque la losa no usa la grúa. Con un encofrado de cada tipo, el de 2,00 (E06 → E05 → G07 → F07) es el que fija los 8 días.</li>
     <li>Losas con bomba de arrastre y cañería vertical por el pozo de S2 (se prolonga a primera hora del día de la losa S1). Pilares y pantallas siempre con grúa: hasta 18–19 m³ por día con las dos grúas y sin imprevistos. El viernes 30/10 no se hormigona (víspera de fin de semana largo).</li>
-    <li>Losa N110: esquina retranqueada y hueco de la escalera nueva en S2 (7,94 m³ menos en total), descensos de losa y una escalera nueva con su viga y pilar (1,74 m³ C35). El encofrado de S2 arranca un día antes (3 días en lugar de 2) y los fondos de los descensos se preparan el día anterior. C09A queda en doble altura y se llena en dos etapas, como siempre. N111 vuelve a la planta tipo.</li>
+    <li>Losas N110 y N117 (iguales): esquina retranqueada y hueco de la escalera nueva en S2 (7,94 m³ menos en total), descensos de losa y una escalera nueva con su viga y pilar (1,74 m³ C35). El encofrado de S2 arranca un día antes (3 días en lugar de 2) y los fondos de los descensos se preparan el día anterior. C09A queda en doble altura y se llena en dos etapas, como siempre. N111 y N118 vuelven a la planta tipo.</li>
     <li>Se trabaja de lunes a viernes. No se cuentan: lun 2/11, la licencia de la construcción (23/12/2026 al 9/1/2027 y 22 al 27/3/2027, según la resolución del MTSS) y carnaval (8 y 9/2/2027).</li>
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.0</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.1</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -327,21 +327,23 @@ const SIN_HORMIGON = new Set(["2026-10-30"]);
   DAYS.length = 0; out.forEach(d => DAYS.push(d));
 })();
 // Ajustes puntuales pedidos en obra
+const RETRANQUEO = [110, 117];   // losas con esquina retranqueada, descensos y escalera nueva
 (function ajustes(){
   // Pases puntuales a la app: escalera de N108 con grúa (27/10) y D04A de N107 (26/10)
   const e27 = DAYS.find(x => x.d === "2026-10-27"); if (e27) e27.esc = { n:107, b:0 };
   const l26 = DAYS.find(x => x.d === "2026-10-26"); if (l26) l26.xv = [{ c:"D04A", n:107 }];
-  // Losa N110: retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35). S2 resta 7,94 m³. El encofrado de S2 arranca un día antes.
-  const d1 = DAYS.find(x => x.fl === 110 && x.k === 1), d2 = DAYS.find(x => x.fl === 110 && x.k === 2), d3 = DAYS.find(x => x.fl === 110 && x.k === 3);
-  const d5 = DAYS.find(x => x.fl === 110 && x.k === 5), pr = DAYS.find(x => x.fl === 109 && x.k === 8), d4 = DAYS.find(x => x.fl === 110 && x.k === 4);
-  if (d1 && d2 && d3 && d4 && d5 && pr) {
-    pr.tasks.splice(1, 0, ["form","Losa N110 S2: dejar armados los fondos y costados de los descensos y de la escalera nueva"]);
-    d1.tasks = d1.tasks.map(x => x[1].startsWith("Losa N110 S2: encofrado de las zonas libres") ? ["form","Losa N110 S2: arrancar por el retranqueo, los descensos y la escalera nueva (día 1 de 3)"] : x);
-    d2.tasks = d2.tasks.map(x => x[1].startsWith("Losa N110 S2: encofrado (día 1 de 2)") ? ["form","Losa N110 S2: encofrado (día 2 de 3) y escaleras"] : x);
+  // Losas con retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35): S2 resta 7,94 m³ y su encofrado arranca un día antes.
+  RETRANQUEO.forEach(N => {
+    const at = (fl, k) => DAYS.find(x => x.fl === fl && x.k === k);
+    const d1 = at(N, 1), d2 = at(N, 2), d4 = at(N, 4), d5 = at(N, 5), pr = at(N - 1, 8);
+    if (!(d1 && d2 && d4 && d5 && pr)) return;
+    pr.tasks.splice(1, 0, ["form",`Losa N${N} S2: dejar armados los fondos y costados de los descensos y de la escalera nueva`]);
+    d1.tasks = d1.tasks.map(x => x[1].startsWith(`Losa N${N} S2: encofrado de las zonas libres`) ? ["form",`Losa N${N} S2: arrancar por el retranqueo, los descensos y la escalera nueva (día 1 de 3)`] : x);
+    d2.tasks = d2.tasks.map(x => x[1].startsWith(`Losa N${N} S2: encofrado (día 1 de 2)`) ? ["form",`Losa N${N} S2: encofrado (día 2 de 3) y escaleras`] : x);
     d4.tasks = d4.tasks.map(x => x[0] === "steel" ? [x[0], x[1] + " · avisar: la escalera nueva y los descensos suman herrería"] : x);
-    d5.o35 = 66.5; d5.m3S = { 2: 62.93 }; d5.extra = [{ c:"Escalera nueva", t:"E", nom:"Escalera nueva", m:1.74, n:109, b:1 }];
-    d5.tasks = d5.tasks.map(x => x[1].startsWith("17 h: llenar losa N110 Sector 2") ? ["pour","17 h: llenar losa N110 Sector 2 con las dos escaleras con bomba (retranqueo y hueco: 7,94 m³ menos; escalera nueva 1,74 m³)"] : x);
-  }
+    d5.o35 = 66.5; d5.m3S = { 2: 62.93 }; d5.extra = [{ c:"Escalera nueva", t:"E", nom:"Escalera nueva", m:1.74, n:N - 1, b:1 }];
+    d5.tasks = d5.tasks.map(x => x[1].startsWith(`17 h: llenar losa N${N} Sector 2`) ? ["pour",`17 h: llenar losa N${N} Sector 2 con las dos escaleras con bomba (retranqueo y hueco: 7,94 m³ menos; escalera nueva 1,74 m³)`] : x);
+  });
 })();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
@@ -388,7 +390,7 @@ function setDay(day){
   DATA.els.forEach(e => { const g = groups["v:"+e.c]; if (g) g.mesh.material = mats[day.vert[e.c] || "pend"]; });
   [1,2,3].forEach(k => { const g = groups["s"+k], st = day.slab[k]; g.g.visible = !!st; if (st) g.mesh.material = mats[st]; });
   // N110 con retranqueo: arriba en los días de la losa N110; abajo en los días de las verticales N110 → N111
-  const up = day.upN === 110, bs = day.baseN === 110, st2 = day.slab[2];
+  const up = RETRANQUEO.includes(day.upN), bs = RETRANQUEO.includes(day.baseN), st2 = day.slab[2];
   groups.s2.g.visible = !!st2 && !up; groups.s2r.g.visible = !!st2 && up; if (st2) groups.s2r.mesh.material = mats[st2];
   groups.b2.g.visible = !bs; groups.b2r.g.visible = bs; groups.b2r.mesh.material = mats[day.base[2] || "base"];
   DATA.esc.forEach((q, i) => {
@@ -408,8 +410,8 @@ function etiqueta(key) {
     return `N${d.vfl} ${nom} · ${m(e.m3)} m³`;
   }
   const r = /^([sb])(\d)(r?)$/.exec(key);
-  if (r) { const n = r[1] === "s" ? d.upN : d.baseN, k = +r[2]; const v = (n === 110 && k === 2) ? 62.9 : M3SL[k]; return `Losa N${n} S${k} · ${m(v)} m³${k === 2 ? " + escalera" : ""}`; }
-  if (key.startsWith("eu") || key.startsWith("eb")) return "Escalera nueva N110 · 1,74 m³";
+  if (r) { const n = r[1] === "s" ? d.upN : d.baseN, k = +r[2]; const v = (RETRANQUEO.includes(n) && k === 2) ? 62.9 : M3SL[k]; return `Losa N${n} S${k} · ${m(v)} m³${k === 2 ? " + escalera" : ""}`; }
+  if (key.startsWith("eu") || key.startsWith("eb")) return `Escalera nueva N${key.startsWith("eu") ? d.upN : d.baseN} · 1,74 m³`;
   return "";
 }
 function initTip(){
