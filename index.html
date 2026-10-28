@@ -208,7 +208,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.3</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.3.4</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -345,6 +345,31 @@ const RETRANQUEO = [110, 117];   // losas con esquina retranqueada, descensos y 
       ["pour","17 h (última hora): llenar losa N108 Sector 3 con bomba"], ["pour","17 h: núcleo T01 de la escalera y F07"]];
     j29.vert = { ...j29.vert, F07:"done" };
     j29.tasks = j29.tasks.map(x => x[1] === "Losa N109 S1: terminar el encofrado" ? ["form","Losa N109 S1: a primera hora cerrar alrededor de F07 y terminar el encofrado"] : x);
+  }
+  // Real mié 28/10: se cumplió todo y además se adelantaron E09, D09, C09, C09A y T01 asc.
+  // Jue 29/10: se trepa la grúa 1 y S1 queda bajo la zona de seguridad: no se tapa S1, se avanza con pilares de S2 y S3 (una sola grúa).
+  const v30 = DAYS.find(x => x.d === "2026-10-30"), d1 = DAYS.find(x => x.fl === 109 && x.k === 1);
+  if (x28 && j29 && v30 && d1) {
+    const S2r = ["E09","D09","C09","C09A","T01 asc. sup. izq."], V1 = GV.v1;
+    x28.vert = { ...x28.vert, ...pour(S2r) }; x28.o45 = 24.7; x28.what = "Losa N108 S3 + núcleo, F07, E09, D09, C09, C09A, T01 asc.";
+    x28.slab = {};
+    x28.tasks = [["steel","Losa N108 S3: herrería (7 h)"], ["pour","17 h (última hora): llenar losa N108 Sector 3 con bomba"],
+      ["pour","17 h: núcleo T01, F07, E09, D09, C09, C09A y T01 asc. (se adelantaron del jueves)"]];
+    j29.vert = { ...x28.vert, ...Object.fromEntries(Object.keys(x28.vert).map(c => [c, "done"])), ...pour(V1) };
+    j29.o45 = 8.1; j29.o35 = 0; j29.what = "pata, C07, C08, E06"; j29.slab = {}; j29.base = {};
+    j29.lvl = "Verticales N108 → N109 (S2 y S3)";
+    j29.tasks = [["nopour","Se trepa la grúa 1: S1 queda bajo la zona de seguridad, no se trabaja en S1"],
+      ["pour","17 h: pata de la escalera, C07, C08 y E06 con una sola grúa (se adelantaron del martes 3/11)"]];
+    v30.vert = { ...j29.vert, ...Object.fromEntries(V1.map(c => [c, "done"])) }; v30.slab = {1:"form"};
+    v30.tasks = [["nopour","Sin hormigón: día previo a fin de semana largo"],
+      ["form","Losa N109 S1: encofrado con toda la gente (no se pudo el jueves por la grúa)"],
+      ["steel","Losa N109 S1: la herrería entra apenas esté tapado (7 h; lo que falte, el martes a primera hora)"],
+      ["form","Losa N109 S2: arrancar a tapar (sus pilares se llenaron el jueves)"]];
+    d1.vert = { ...v30.vert }; d1.o45 = 0; d1.what = "Losa N109 S1";
+    d1.tasks = d1.tasks.filter(x => !(x[0] === "pour" && !x[1].includes("Sector 1")))
+      .map(x => x[1].startsWith("Losa N109 S2: encofrado de las zonas libres") ? ["form","Losa N109 S2: encofrado"] : x);
+    d1.tasks.splice(1, 0, ["steel","Losa N109 S1: termina la herrería a primera hora"]);
+    const d2 = DAYS.find(x => x.fl === 109 && x.k === 2); if (d2) d2.tasks = d2.tasks.map(x => x[1].startsWith("Losa N109 S2: encofrado (día 1 de 2)") ? ["form","Losa N109 S2: encofrado y escalera"] : x);
   }
   // Losas con retranqueo y descensos en S2 + escalera nueva (1,74 m³ C35): S2 resta 7,94 m³ y su encofrado arranca un día antes.
   RETRANQUEO.forEach(N => {
