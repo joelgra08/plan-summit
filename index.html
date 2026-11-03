@@ -208,7 +208,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.1</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.2</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -293,11 +293,11 @@ const e0 = (L, vert, extraTask) => push({ fl:L, k:0, upN:L, baseN:L-1, vfl:L-1, 
     vert.length === 1 && vert[0].startsWith("T04") ? solo(vert[0]) : (vert.length ? pv(vert) : null)] });
 
 // mar 3/11: pilares de S3 de N108 → N109 (decidido en obra, T04 va con los demás)
-{ const l = [...VG.h6.filter(c => c !== "D04A"), ...VG.h0];
-  ["G07","T02 asc. inf. izq.","H09","G09","F09","T05 fachada inf.","G08","F07","T01 escalera nucleo","E09","D09","C09","C09A","T01 asc. sup. izq.","T01 escalera pata","C07","C08","E06","D04A"].forEach(c => vday(108, [c]));
+{ const l = ["T01 escalera pata", ...VG.h6.filter(c => c !== "D04A"), ...VG.h0];
+  ["G07","T02 asc. inf. izq.","H09","G09","F09","T05 fachada inf.","G08","F07","T01 escalera nucleo","E09","D09","C09","C09A","T01 asc. sup. izq.","C07","C08","E06","D04A"].forEach(c => vday(108, [c]));
   push({ fl:109, k:-1, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, l), slab:{1:"steel",2:"form"}, lvl:`Verticales N108 → N109 (S3) + losa N109`,
-    o45:m3of(l), o35:0, what:"C04, C05, C06, T02 asc. sup., E05 y T04",
-    tasks:[["steel","Losa N109 S1: terminar la herrería"], ["form","Losa N109 S2: encofrado y escalera"], ["pour","17 h: C04, C05, C06, T02 asc. sup., E05 y T04 (grúa; quedaron prontos el viernes)"]] }); }
+    o45:m3of(l), o35:0, what:"pata, C04, C05, C06, T02 asc. sup., E05 y T04",
+    tasks:[["steel","Losa N109 S1: terminar la herrería"], ["form","Losa N109 S2: encofrado y escalera"], ["pour","17 h: pata de la escalera, C04, C05, C06, T02 asc. sup., E05 y T04 (grúa)"]] }); }
 
 function cicloNormal(L) {   // e1 … e6 del piso L (verticales N L → N L+1)
   const nx = L + 1, ret = RET(nx);
@@ -420,14 +420,14 @@ for (let L = 114; L <= LAST; L++) {
   j29.vert = { ...d28 }; j29.o45 = 0; j29.o35 = 0; j29.what = ""; j29.slab = {}; j29.base = {};
   j29.lvl = "Verticales N108 → N109 (S2 y S3)";
   j29.tasks = [["nopour","Se trepa la grúa 1: S1 queda bajo la zona de seguridad, no se trabaja en S1"],
-    ["vert","Armar pata de la escalera, C07, C08, E06 y D04A (se llenan el viernes)"]];
+    ["vert","Armar C07, C08, E06 y D04A (se llenan el viernes)"]];
   // Real vie 30/10: pata, C07, C08, E06 y D04A; quedan prontos C04, C05, C06, T02 asc. sup., E05 y T04 para el martes
-  const V30 = ["T01 escalera pata","C07","C08","E06","D04A"];
-  v30.vert = { ...d28, ...pour(V30) }; v30.o45 = m3of(V30); v30.o35 = 0; v30.what = "pata, C07, C08, E06, D04A"; v30.slab = {1:"form",2:"form"}; v30.base = {};
+  const V30 = ["C07","C08","E06","D04A"];
+  v30.vert = { ...d28, ...pour(V30) }; v30.o45 = m3of(V30); v30.o35 = 0; v30.what = "C07, C08, E06, D04A"; v30.slab = {1:"form",2:"form"}; v30.base = {};
   v30.lvl = "Verticales N108 → N109 + losa N109";
   v30.tasks = [["form","Losa N109 S1: encofrado con toda la gente (no se pudo el jueves por la grúa)"],
-    ["form","Losa N109 S2: arrancar a tapar"], ["vert","Dejar prontos C04, C05, C06, T02 asc. sup., E05 y T04 (se llenan el martes 3/11)"],
-    ["pour","17 h: pata de la escalera, C07, C08, E06 y D04A (pasaron del jueves por la grúa)"]];
+    ["form","Losa N109 S2: arrancar a tapar"], ["vert","Dejar prontos la pata, C04, C05, C06, T02 asc. sup., E05 y T04 (se llenan el martes 3/11)"],
+    ["pour","17 h: C07, C08, E06 y D04A (pasaron del jueves por la grúa)"]];
 })();
 const WD = ["dom","lun","mar","mié","jue","vie","sáb"];
 const fdate = iso => { const [y,m,d] = iso.split("-").map(Number); const dt = new Date(y, m-1, d); return `${WD[dt.getDay()]} ${d}/${m}`; };
