@@ -208,7 +208,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.2</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.3</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -315,77 +315,49 @@ function cicloNormal(L) {   // e1 … e6 del piso L (verticales N L → N L+1)
     tasks:[["steel",`Losa N${nx} S1: herrería (7 h)`], ["form", ret ? `Losa N${nx} S2: arrancar por el retranqueo, los descensos y los fondos de la escalera nueva` : `Losa N${nx} S2: encofrado y escalera`], pv(VG.h6)] });
 }
 
-// N109: la S1 no llegó al mié 4/11 (la herrería entra a la tarde); S1 + S2 + escalera juntas el vie 6/11 a las 13 h, S3 mar 10/11
+// N109: la S1 no llegó al mié 4/11; jue 5/11 sin hormigón; vie 6/11 paro general de 9 a 13 (no se llena ni se hacen extras)
+// S1 + S2 + escalera el lun 9/11 a las 13 h; S3 + pilares de S1 el mar 10/11
 push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"steel",2:"form",3:"formPart"}, lvl:"Losa N109", o45:0, o35:0,
-  tasks:[["nopour","Sin llenado: la losa S1 pasa al viernes"], ["steel","Losa N109 S1: entra la herrería a la tarde"], ["form","Losa N109 S2: encofrado y escalera"], ["form","Losa N109 S3: encofrado de las zonas libres"]] });
-push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"steel",2:"steel",3:"formPart"}, lvl:"Losa N109", o45:0, o35:0,
-  tasks:[["nopour","Sin llenado"], ["steel","Losa N109 S1: termina la herrería y sigue de largo a S2 con la escalera (9 h)"], ["form","Losa N109 S3: encofrado (los tableros de S3 siguen parados)"], REC] });
-push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"pour",2:"pour",3:"form"}, lvl:"Losa N109 S1 + S2 + escalera", o45:0, o35:124.5, esc:{ n:108, b:1 },
+  tasks:[["nopour","Sin llenado: la losa S1 no llegó"], ["steel","Losa N109 S1: entra la herrería a la tarde"], ["form","Losa N109 S2: encofrado y escalera"], ["form","Losa N109 S3: encofrado de las zonas libres"]] });
+push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"steel",2:"steel",3:"form"}, lvl:"Losa N109", o45:0, o35:0,
+  tasks:[["nopour","Sin hormigón"], ["steel","Losa N109 S1: herrería, sigue de largo a S2 con la escalera"], ["form","Losa N109 S3: encofrado"]] });
+push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"steel",2:"steel",3:"form"}, lvl:"Losa N109", o45:0, o35:0,
+  tasks:[["nopour","Paro general de 9 a 13 (fallecimiento): no se llena ni se hacen extras"], ["vert","Bajar los encofrados verticales a pie de obra"],
+    ["form","Losa N109 S3: seguir con el encofrado hasta cerrarlo"], ["steel","Losa N109 S2: herrería y escalera"]] });
+push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), slab:{1:"pour",2:"pour",3:"steel"}, lvl:"Losa N109 S1 + S2 + escalera", o45:0, o35:124.5, esc:{ n:108, b:1 },
   what:"Losa N109 S1 + Losa N109 S2 + escalera",
-  tasks:[["bomba","A primera hora: prolongar la cañería vertical de la bomba (pozo de S2)"], ["steel","Losa N109 S2: termina la herrería y la escalera a primera hora"],
-    ["form","Losa N109 S3: encofrado"], ["pour","13 h: llenar losa N109 Sectores 1 y 2 y la escalera con bomba (≈125 m³, arrancar temprano)"]] });
+  tasks:[["bomba","A primera hora: prolongar la cañería vertical de la bomba (pozo de S2)"], ["steel","Losa N109 S2: termina la herrería a primera hora; después entra a S3"],
+    ["pour","13 h: llenar losa N109 Sectores 1 y 2 y la escalera con bomba (≈125 m³, arrancar temprano)"]] });
 { const a = [...VG.h1, "E09", "D09"], b = ["T01 escalera nucleo", "C09A", ...VG.h2];
-  push({ fl:109, k:1, upN:110, baseN:109, vfl:109, base:{1:"done",2:"done",3:"steel"}, vert:vday(109, a), slab:{}, lvl:vB(109), o45:m3of(a), o35:0, what:lst(a),
-    tasks:[UPS3, ["steel","Losa N109 S3: herrería (7 h)"], ["form","Losa N109 S3: terminar el encofrado a primera hora"], pv(a)] });
-  push({ fl:109, k:2, upN:110, baseN:109, vfl:109, base:{1:"done",2:"done",3:"pour"}, vert:vday(109, b), slab:{}, lvl:`Losa N109 S3 + ${vB(109)}`, o45:m3of(b), o35:45.3,
-    what:`Losa N109 S3 + ${lst(b)}`, tasks:[["pour","17 h: llenar losa N109 Sector 3 con bomba"], pv(b, " (la losa va por cañería)")] }); }
-push({ fl:109, k:3, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h3), slab:{}, lvl:vB(109), o45:m3of(VG.h3), o35:0, what:"T05",
-  tasks:[REC, solo(VG.h3[0])] });
+  push({ fl:109, k:1, upN:110, baseN:109, vfl:109, base:{1:"done",2:"done",3:"pour"}, vert:vday(109, a), slab:{}, lvl:`Losa N109 S3 + ${vB(109)}`, o45:m3of(a), o35:45.3,
+    what:`Losa N109 S3 + ${lst(a)}`, tasks:[UPS3, ["steel","Losa N109 S3: termina la herrería a primera hora"], ["pour","17 h: llenar losa N109 Sector 3 con bomba"], pv(a, " (la losa va por cañería)")] });
+  push({ fl:109, k:2, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, b), slab:{}, lvl:vB(109), o45:m3of(b), o35:0, what:lst(b), tasks:[pv(b)] }); }
+push({ fl:109, k:3, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h3), slab:{}, lvl:vB(109), o45:m3of(VG.h3), o35:0, what:"T05", tasks:[REC, solo(VG.h3[0])] });
 push({ fl:109, k:4, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h5), slab:{1:"form"}, lvl:vB(109), o45:m3of(VG.h5), o35:0, what:lst(VG.h5),
   tasks:[["form","Losa N110 S1: encofrado"], pv(VG.h5)] });
 push({ fl:109, k:5, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h6), slab:{1:"form",2:"form"}, lvl:vB(109), o45:m3of(VG.h6), o35:0, what:lst(VG.h6),
   tasks:[["form","Losa N110 S1: terminar el encofrado"], ["form","Losa N110 S2: arrancar por el retranqueo, los descensos y los fondos de la escalera nueva"], pv(VG.h6)] });
 push({ fl:110, k:-1, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, []), slab:{1:"steel",2:"form"}, lvl:"Losa N110 (retranqueo)", o45:0, o35:0,
-  tasks:[["nopour","Sin llenado"], ["steel","Losa N110 S1: herrería (7 h)"], ["form","Losa N110 S2: retranqueo, descensos y escalera nueva (fondos y costados)"], REC] });
-// N110: S1 mar 17/11, S2 vie 20/11 (con T05), S3 lun 23/11
+  tasks:[["nopour","Sin llenado"], ["steel","Losa N110 S1: herrería (7 h)"], ["form","Losa N110 S2: retranqueo, descensos y escalera nueva"], REC] });
+// N110 a N112: ciclo normal (S1 mié 18/11, S2 vie 20/11, S3 mar 24/11)
 e0(110, VG.h0);
-DAYS[DAYS.length - 1].tasks = DAYS[DAYS.length - 1].tasks.map(x => x[0] === "steel" ? ["form","Losa N110 S2: terminar el encofrado y las dos escaleras"] : x);
-DAYS[DAYS.length - 1].slab = {1:"pour",2:"form"};
-push({ fl:110, k:1, upN:111, baseN:110, vfl:110, base:{1:"done",2:"steel",3:"form"}, vert:vday(110, VG.h1), slab:{}, lvl:vB(110), o45:m3of(VG.h1), o35:0, what:lst(VG.h1),
-  tasks:[UPS3, ["steel", herrS2(110) + " (con el retranqueo, hasta el viernes a primera hora)"], ["form","Losa N110 S3: encofrado (día 1 de 2)"], pv(VG.h1, " sobre la losa S1")] });
-push({ fl:110, k:2, upN:111, baseN:110, vfl:110, base:{1:"done",2:"steel",3:"form"}, vert:vday(110, VG.h2), slab:{}, lvl:vB(110), o45:m3of(VG.h2), o35:0, what:lst(VG.h2),
-  tasks:[["steel","Losa N110 S2: herrería (descensos y escalera nueva)"], ["form","Losa N110 S3: terminar el encofrado"], pv(VG.h2)] });
-push({ fl:110, k:4, upN:111, baseN:110, vfl:110, base:{1:"done",2:"pour",3:"steel"}, vert:vday(110, VG.h3), slab:{}, lvl:`Losa N110 S2 + ${vB(110)}`, o45:m3of(VG.h3), ...s2pour(110),
-  what:"Losa N110 S2 + escalera + escalera nueva + T05",
-  tasks:[["steel","Losa N110 S2: termina la herrería y las dos escaleras a primera hora"], ["steel","Losa N110 S3: herrería (7 h), apenas termina S2"], ["pour", s2txt(110)], solo(VG.h3[0])] });
-if (OPCION_N110 === 1) {
-  push({ fl:110, k:5, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"pour"}, vert:vday(110, VG.h4), slab:{1:"form"}, lvl:`Losa N110 S3 + ${vB(110)}`, o45:m3of(VG.h4), o35:45.3,
-    what:`Losa N110 S3 + ${lst(VG.h4)}`, tasks:[["form","Losa N111 S1: encofrado"], ["pour","17 h: llenar losa N110 Sector 3 con bomba"], pv(VG.h4, " (la losa va por cañería)")] });
-  push({ fl:110, k:6, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, VG.h5), slab:{1:"form"}, lvl:vB(110), o45:m3of(VG.h5), o35:0, what:lst(VG.h5),
-    tasks:[["form","Losa N111 S1: terminar el encofrado"], REC, pv(VG.h5)] });
-  push({ fl:110, k:7, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, VG.h6), slab:{1:"steel",2:"form"}, lvl:vB(110), o45:m3of(VG.h6), o35:0, what:lst(VG.h6),
-    tasks:[["steel","Losa N111 S1: herrería (7 h)"], ["form","Losa N111 S2: encofrado y escalera"], pv(VG.h6)] });
-  e0(111, VG.h0);
-} else {
-  const a = VG.h5.filter(c => c !== "E06"), b = ["E06", ...VG.h6.filter(c => c !== "E05")];
-  push({ fl:110, k:5, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"steel"}, vert:vday(110, VG.h4), slab:{1:"form"}, lvl:vB(110), o45:m3of(VG.h4), o35:0, what:lst(VG.h4),
-    tasks:[["steel","Losa N110 S3: herrería (7 h)"], ["form","Losa N111 S1: encofrado"], pv(VG.h4)] });
-  push({ fl:110, k:6, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"pour"}, vert:vday(110, a), slab:{1:"form"}, lvl:`Losa N110 S3 + ${vB(110)}`, o45:m3of(a), o35:45.3,
-    what:`Losa N110 S3 + ${lst(a)}`, tasks:[["form","Losa N111 S1: terminar el encofrado"], ["pour","17 h: llenar losa N110 Sector 3 con bomba"], pv(a)] });
-  push({ fl:110, k:7, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, b), slab:{1:"steel",2:"form"}, lvl:vB(110), o45:m3of(b), o35:0, what:lst(b),
-    tasks:[["steel","Losa N111 S1: herrería (7 h)"], ["form","Losa N111 S2: encofrado y escalera"], pv(b)] });
-  e0(111, ["E05", ...VG.h0]);
-  DAYS[DAYS.length - 1].tasks = DAYS[DAYS.length - 1].tasks.map(x => x[0] === "pour" && x[1].includes("E05") ? ["pour","17 h: E05 y T04 (grúa; excepción: T04 no va solo)"] : x);
-}
-// N111 y N112: ciclo normal
-cicloNormal(111); e0(112, VG.h0); cicloNormal(112); e0(113, VG.h0);
-// N113 comprimida antes de la licencia: S1 mié 16/12, S2 jue 17/12, S3 lun 21/12; mar 22/12 limpieza
+DAYS[DAYS.length - 1].tasks = DAYS[DAYS.length - 1].tasks.map(x => x[0] === "steel" ? ["steel", herrS2(110)] : x);
+cicloNormal(110); e0(111, VG.h0); cicloNormal(111); e0(112, VG.h0); cicloNormal(112); e0(113, VG.h0);
+// N113 comprimida antes de la licencia: S1 jue 17/12, S2 vie 18/12, S3 lun 21/12; mar 22/12 limpieza
 DAYS[DAYS.length - 1].tasks = DAYS[DAYS.length - 1].tasks.map(x => x[0] === "steel" ? ["steel", herrS2(113) + ": termina mañana a primera hora"] : x);
-push({ fl:113, k:1, upN:114, baseN:113, vfl:113, base:{1:"done",2:"pour",3:"form"}, vert:vday(113, VG.h1), slab:{}, lvl:`Losa N113 S2 + ${vB(113)}`, o45:m3of(VG.h1), ...s2pour(113),
-  what:`Losa N113 S2 + escalera + ${lst(VG.h1)}`,
-  tasks:[UPS3, ["steel","Losa N113 S2: termina la herrería y la escalera a primera hora"], ["form","Losa N113 S3: encofrado (día 1 de 2)"], ["pour", s2txt(113)], pv(VG.h1, " sobre la losa S1")] });
-push({ fl:113, k:2, upN:114, baseN:113, vfl:113, base:{1:"done",2:"done",3:"steel"}, vert:vday(113, VG.h3), slab:{}, lvl:vB(113), o45:m3of(VG.h3), o35:0, what:"T05",
-  tasks:[["form","Losa N113 S3: terminar el encofrado a primera hora"], ["steel","Losa N113 S3: herrería (7 h; lo que falte, el lunes a primera hora)"], solo(VG.h3[0])] });
-push({ fl:113, k:3, upN:114, baseN:113, vfl:113, base:{1:"done",2:"done",3:"pour"}, vert:vday(113, VG.h2), slab:{}, lvl:`Losa N113 S3 + ${vB(113)}`, o45:m3of(VG.h2), o35:45.3,
-  what:`Losa N113 S3 + ${lst(VG.h2)}`, tasks:[["pour","17 h: llenar losa N113 Sector 3 con bomba"], pv(VG.h2)] });
-push({ fl:113, k:4, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, []), slab:{}, lvl:"Limpieza antes de la licencia", o45:0, o35:0,
-  tasks:[["nopour","Sin hormigón: tareas de limpieza antes de la licencia de la construcción"]] });
-// Vuelta de la licencia (lun 11/1): núcleo, pata y pilares de S3, y la losa N114 S1 el jueves 14/1
-push({ fl:113, k:5, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, VG.h4), slab:{1:"form"}, lvl:vB(113), o45:m3of(VG.h4), o35:0, what:lst(VG.h4),
-  tasks:[["form","Losa N114 S1: encofrado"], pv(VG.h4)] });
-push({ fl:113, k:6, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, VG.h5), slab:{1:"form"}, lvl:vB(113), o45:m3of(VG.h5), o35:0, what:lst(VG.h5),
+{ const a = [...VG.h1, "E09", "D09"], b = ["T01 escalera nucleo", "C09A", ...VG.h2];
+  push({ fl:113, k:1, upN:114, baseN:113, vfl:113, base:{1:"done",2:"pour",3:"form"}, vert:vday(113, a), slab:{}, lvl:`Losa N113 S2 + ${vB(113)}`, o45:m3of(a), ...s2pour(113),
+    what:`Losa N113 S2 + escalera + ${lst(a)}`,
+    tasks:[UPS3, ["steel","Losa N113 S2: termina la herrería y la escalera a primera hora; después entra a S3"], ["form","Losa N113 S3: encofrado"], ["pour", s2txt(113)], pv(a)] });
+  push({ fl:113, k:2, upN:114, baseN:113, vfl:113, base:{1:"done",2:"done",3:"pour"}, vert:vday(113, VG.h3), slab:{}, lvl:`Losa N113 S3 + ${vB(113)}`, o45:m3of(VG.h3), o35:45.3,
+    what:"Losa N113 S3 + T05", tasks:[["steel","Losa N113 S3: termina la herrería a primera hora"], ["pour","17 h: llenar losa N113 Sector 3 con bomba"], solo(VG.h3[0])] });
+  push({ fl:113, k:3, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, []), slab:{}, lvl:"Limpieza antes de la licencia", o45:0, o35:0,
+    tasks:[["nopour","Sin hormigón: tareas de limpieza antes de la licencia de la construcción"]] });
+  // Vuelta de la licencia (lun 11/1): núcleo y F07, pata, pilares de S3 y la losa N114 S1 el jueves 14/1
+  push({ fl:113, k:4, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, b), slab:{1:"form"}, lvl:vB(113), o45:m3of(b), o35:0, what:lst(b), tasks:[["form","Losa N114 S1: encofrado"], pv(b)] }); }
+push({ fl:113, k:5, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, VG.h5), slab:{1:"form"}, lvl:vB(113), o45:m3of(VG.h5), o35:0, what:lst(VG.h5),
   tasks:[["form","Losa N114 S1: terminar el encofrado"], REC, pv(VG.h5)] });
-push({ fl:113, k:7, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, VG.h6), slab:{1:"steel",2:"form"}, lvl:vB(113), o45:m3of(VG.h6), o35:0, what:lst(VG.h6),
+push({ fl:113, k:6, upN:114, baseN:113, vfl:113, base:{}, vert:vday(113, VG.h6), slab:{1:"steel",2:"form"}, lvl:vB(113), o45:m3of(VG.h6), o35:0, what:lst(VG.h6),
   tasks:[["steel","Losa N114 S1: herrería (7 h)"], ["form","Losa N114 S2: encofrado y escalera"], pv(VG.h6)] });
 // N114 a N126: ciclo normal de 7 días
 for (let L = 114; L <= LAST; L++) {
