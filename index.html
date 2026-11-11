@@ -208,7 +208,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.6</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.7</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -328,15 +328,16 @@ push({ fl:109, k:0, upN:109, baseN:108, vfl:108, base:{}, vert:vday(108, []), sl
   what:"Losa N109 S1 + Losa N109 S2 + escalera",
   tasks:[["bomba","A primera hora: prolongar la cañería vertical de la bomba (pozo de S2)"], ["steel","Losa N109 S2: termina la herrería a primera hora; después entra a S3"],
     ["pour","13 h: llenar losa N109 Sectores 1 y 2 y la escalera con bomba (≈125 m³, arrancar temprano)"]] });
-{ const a = ["T02 asc. inf. izq.", "F09", "G09"], b = ["T01 escalera nucleo", "C09A", "E09", "D09", "G07", "G08"], c = ["F07", "H09", ...VG.h5];
+{ const a = ["T02 asc. inf. izq.", "F09", "G09"], b = ["T01 escalera nucleo", "T01 asc. sup. izq.", "E09", "D09"], c = ["G07", "G08", "H09", "T01 escalera pata", "C07", "C08", "E06", "C09", "C09A"], t5 = ["T05 fachada inf.", "F07"];
   // mar 10/11: la planta canceló la losa (se rompió la bomba); S3 pasa al mié 11/11. De los pilares solo entraron T02 inf, F09 y G09
   push({ fl:109, k:1, upN:110, baseN:109, vfl:109, base:{1:"done",2:"done",3:"steel"}, vert:vday(109, a), slab:{}, lvl:vB(109), o45:m3of(a), o35:0,
     what:lst(a), tasks:[UPS3, ["nopour","La planta canceló la losa S3 (se rompió la bomba): pasa a mañana a primera hora"], ["pour","Se llenaron T02 asc. inf., F09 y G09 (G07, G08 y H09 quedan para después)"]] });
   push({ fl:109, k:2, upN:110, baseN:109, vfl:109, base:{1:"done",2:"done",3:"pour"}, vert:vday(109, b), slab:{}, lvl:`Losa N109 S3 + ${vB(109)}`, o45:m3of(b), o35:45.3,
-    what:`Losa N109 S3 + ${lst(b)}`, tasks:[["pour","A primera hora: llenar losa N109 Sector 3 con bomba (pasó del martes)"], pv(b)] });
-  push({ fl:109, k:3, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h3), slab:{}, lvl:vB(109), o45:m3of(VG.h3), o35:0, what:"T05", tasks:[REC, solo(VG.h3[0])] });
+    what:`Losa N109 S3 + ${lst(b)}`, tasks:[["pour","Losa N109 Sector 3 con bomba (pasó del martes por la rotura de la bomba)"], ["pour","Se llenaron el núcleo T01, T01 asc., E09 y D09 (C09A, G07 y G08 pasan al viernes)"]] });
+  // jue 12/11: F07 va con T05 (excepción acordada para no correr la losa N110 S1)
+  push({ fl:109, k:3, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, t5), slab:{}, lvl:vB(109), o45:m3of(t5), o35:0, what:lst(t5), tasks:[REC, pv(t5, " (excepción: F07 va con T05)")] });
   push({ fl:109, k:4, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, c), slab:{}, lvl:vB(109), o45:m3of(c), o35:0, what:lst(c),
-    tasks:[["form","Losa N110 S2: arrancar por el retranqueo, los descensos y los fondos de la escalera nueva"], REC, pv(c)] }); }
+    tasks:[["form","Losa N110 S2: arrancar por el retranqueo, los descensos y los fondos de la escalera nueva"], pv(c)] }); }
 push({ fl:109, k:5, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, VG.h6), slab:{1:"form",2:"form"}, lvl:vB(109), o45:m3of(VG.h6), o35:0, what:lst(VG.h6),
   tasks:[["form","Losa N110 S1: encofrado"], ["form","Losa N110 S2: retranqueo y descensos"], pv(VG.h6)] });
 push({ fl:110, k:-1, upN:110, baseN:109, vfl:109, base:{}, vert:vday(109, []), slab:{1:"form",2:"form"}, lvl:"Losa N110 (retranqueo)", o45:0, o35:0,
