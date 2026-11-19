@@ -174,6 +174,14 @@ details.sup .notes{margin-top:10px}
   <span><i style="--c:#e2b93b"></i>Escalera nueva (N110 y N117)</span>
 </div>
 
+<section style="display:grid;gap:10px" id="reporte">
+  <h2>Reporte para proyecto ejecutivo</h2>
+  <div class="objbar">
+    <button type="button" id="btnRep">Descargar reporte semanal</button>
+    <span class="msg" id="repMsg">Semana del día elegido + 15 días para adelante</span>
+  </div>
+</section>
+
 <section style="display:grid;gap:10px">
   <h2>Pedidos a Cielo Azul · próximos 15 días hábiles</h2>
   <div class="tw"><table>
@@ -208,7 +216,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.4.12</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.0</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -707,6 +715,91 @@ async function objDescargar(offset){
 }
 document.getElementById("btnObj").addEventListener("click", () => objDescargar(0));
 document.getElementById("btnObjSig").addEventListener("click", () => objDescargar(1));
+// ---------- Reporte semanal para proyecto ejecutivo ----------
+function repDatos(refIso){
+  const [y,m,d] = refIso.split("-").map(Number); const r = new Date(y, m-1, d);
+  const dow = r.getDay(); const lun = new Date(r); lun.setDate(r.getDate() - (dow === 0 ? 6 : dow - 1));
+  const vie = new Date(lun); vie.setDate(lun.getDate() + 4);
+  const fin = new Date(vie); fin.setDate(vie.getDate() + 15);
+  const a = iso(lun), b = iso(vie), c = iso(fin);
+  const semana = DAYS.filter(x => x.d >= a && x.d <= b);
+  const prox = DAYS.filter(x => x.d > b && x.d <= c);
+  const losas = [];
+  for (let n = 107; n <= LAST && losas.length < 4; n++) {
+    const f = p => { const x = DAYS.find(z => (z.what || "").includes(`Losa N${n} ${p}`)); return x ? x.d : null; };
+    const s = [f("S1"), f("S2"), f("S3")];
+    if (s[2] && s[2] >= a) losas.push({ n, s });
+  }
+  return { a, b, c, semana, prox, losas };
+}
+async function repImagen(refIso){
+  try { await document.fonts.ready; } catch (e) {}
+  const R = repDatos(refIso), W = 1080, P = 56, TW = W - 2*P - 230;
+  const meas = document.createElement("canvas").getContext("2d");
+  const F = { t:"500 30px 'IBM Plex Sans', system-ui, sans-serif", b:"700 30px 'IBM Plex Sans', system-ui, sans-serif" };
+  const fila = x => {
+    const m3 = (x.o45 || 0) + (x.o35 || 0);
+    const txt = x.what ? `${x.what}` : ((x.tasks.find(t => t[0] === "nopour") || [,"Sin llenado"])[1]);
+    const losa = /Losa N/.test(x.what || "");
+    meas.font = losa ? F.b : F.t;
+    return { d:x.d, txt, losa, m3, lines: objWrap(meas, txt + (m3 ? ` · ${fnum(m3)}\u00a0m³` : ""), TW) };
+  };
+  const S = R.semana.map(fila).map(r => (r.lines.length < 2 && r.lines.push(""), r)), N = R.prox.map(fila);
+  const hRows = rows => rows.reduce((s, r) => s + r.lines.length * 40 + 18, 0);
+  const H = 120 + 200 + 70 + hRows(S) + 50 + 70 + hRows(N) + 50 + 70 + 60 + R.losas.length * 52 + 70 + 110;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const x = cv.getContext("2d");
+  x.fillStyle = "#f4f5f1"; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#142d20"; x.fillRect(0, 0, W, 120);
+  x.fillStyle = "#fff"; x.font = "600 40px 'IBM Plex Sans', system-ui, sans-serif"; x.textBaseline = "middle"; x.fillText("Plan de llenado Summit", P, 60);
+  x.textBaseline = "alphabetic";
+  let y = 190; x.fillStyle = "#646e68"; x.font = "500 30px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText("REPORTE PARA PROYECTO EJECUTIVO", P, y);
+  y += 72; x.fillStyle = "#1e2622"; x.font = "800 56px Archivo, system-ui, sans-serif"; x.fillText(`Semana ${fdate(R.a).slice(4)} al ${fdate(R.b).slice(4)}`, P, y);
+  const bloque = (titulo, rows, estado) => {
+    y += 70; x.fillStyle = "#646e68"; x.font = "500 28px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText(titulo, P, y);
+    x.strokeStyle = "#cfd4ce"; x.lineWidth = 2; x.beginPath(); x.moveTo(P, y + 16); x.lineTo(W - P, y + 16); x.stroke(); y += 16;
+    if (!rows.length) { y += 50; x.fillStyle = "#646e68"; x.font = F.t; x.fillText("Sin días en el plan", P, y); return; }
+    for (const r of rows) {
+      y += 18 + 30;
+      const st = estado ? (r.d < TODAY ? "hecho" : r.d === TODAY ? "hoy" : "previsto") : "";
+      x.fillStyle = r.losa ? "#e0522b" : "#1e2622"; x.font = "600 30px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText(fdate(r.d), P, y);
+      if (st) { x.fillStyle = st === "hecho" ? "#3a7d55" : st === "hoy" ? "#e0522b" : "#8a938d"; x.font = "500 22px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText(st.toUpperCase(), P, y + 30); }
+      x.fillStyle = r.d < TODAY || !r.m3 ? "#4a534e" : "#1e2622"; x.font = r.losa ? F.b : F.t;
+      r.lines.forEach((ln, i) => x.fillText(ln, P + 230, y + i * 40)); y += (r.lines.length - 1) * 40;
+    }
+  };
+  bloque("ESTA SEMANA", S, true);
+  y += 30; bloque(`PRÓXIMOS 15 DÍAS · HASTA EL ${fdate(R.c).slice(4)}`, N, false);
+  y += 100; x.fillStyle = "#646e68"; x.font = "500 28px 'IBM Plex Mono', ui-monospace, monospace"; x.fillText("PRÓXIMAS LOSAS", P, y);
+  y += 50; x.font = "600 26px 'IBM Plex Mono', ui-monospace, monospace"; x.fillStyle = "#646e68";
+  const cx = [P, P + 220, P + 470, P + 720]; ["Losa","S1","S2","S3"].forEach((h, i) => x.fillText(h, cx[i], y));
+  for (const L of R.losas) {
+    y += 52; x.fillStyle = "#1e2622"; x.font = "700 32px 'IBM Plex Sans', system-ui, sans-serif"; x.fillText(`N${L.n}`, cx[0], y);
+    x.font = "500 30px 'IBM Plex Sans', system-ui, sans-serif";
+    L.s.forEach((s, i) => { x.fillStyle = s && s < TODAY ? "#3a7d55" : "#1e2622"; x.fillText(s ? fdate(s) + (s < TODAY ? " ✓" : "") : "—", cx[i+1], y); });
+  }
+  const H2 = Math.min(H, y + 120);
+  x.fillStyle = "#8a938d"; x.font = "500 26px 'IBM Plex Sans', system-ui, sans-serif"; x.fillText("joelgra08.github.io/plan-summit · m³ teóricos", P, H2 - 40);
+  const out = document.createElement("canvas"); out.width = W; out.height = H2; out.getContext("2d").drawImage(cv, 0, 0);
+  return { blob: await new Promise(r => out.toBlob(r, "image/png")), R };
+}
+async function repDescargar(){
+  const msg = document.getElementById("repMsg"), btn = document.getElementById("btnRep");
+  btn.disabled = true; msg.textContent = "Armando el reporte…";
+  try {
+    const ref = (DAYS[SEL] && DAYS[SEL].d) || TODAY;
+    const { blob, R } = await repImagen(ref);
+    const name = `Reporte Summit semana ${R.a.split("-").reverse().join("-")}.png`;
+    const file = new File([blob], name, {type:"image/png"});
+    if (navigator.canShare && navigator.canShare({files:[file]}) && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      await navigator.share({files:[file], title:name}); msg.textContent = "Reporte listo para compartir.";
+    } else {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000); msg.textContent = `Descargado: ${name}`;
+    }
+  } catch (err) { msg.textContent = err && err.name !== "AbortError" ? "No se pudo armar el reporte en este navegador." : "Semana del día elegido + 15 días para adelante"; }
+  btn.disabled = false;
+}
+document.getElementById("btnRep").addEventListener("click", repDescargar);
 main();
 </script>
 
