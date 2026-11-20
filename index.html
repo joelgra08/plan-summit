@@ -216,7 +216,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.5</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.6</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -360,11 +360,11 @@ DAYS[DAYS.length - 1].tasks = DAYS[DAYS.length - 1].tasks.map(x => x[0] === "ste
 push({ fl:110, k:1, upN:111, baseN:110, vfl:110, base:{1:"done",2:"pour",3:"form"}, vert:vday(110, s1), slab:{}, lvl:`Losa N110 S2 + ${vB(110)}`, o45:m3of(s1), ...s2pour(110),
   what:`Losa N110 S2 + escalera + escalera nueva + ${lst(s1)}`,
   tasks:[UPS3, ["steel","Losa N110 S2: termina la herrería y las dos escaleras a primera hora"], ["form","Losa N110 S3: encofrado"], ["pour", s2txt(110)], pv(s1, " sobre la losa S1")] }); }
-{ const v20 = ["T05 fachada inf.", "T01 asc. sup. izq.", "E09", "D09", "C09", "C09A"];   // vie 20/11: decidido en obra, T05 con los pilares de S2
+{ const v20 = ["T05 fachada inf.", "T01 asc. sup. izq.", "E09", "D09"];   // vie 20/11: decidido en obra, T05 con los pilares de S2
 push({ fl:110, k:2, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"form"}, vert:vday(110, v20), slab:{1:"formPart"}, lvl:vB(110), o45:m3of(v20), o35:0, what:lst(v20),
   tasks:[["form","Losa N110 S3: terminar el encofrado"], ["form","Losa N111 S1: arranca la tapada parcial"], REC, pv(v20, " (decidido en obra)")] }); }
 // acordado el 19/11: el núcleo pasa al lunes; E06 y E05 juntos (molde chico extra); losa N111 S1 un día antes (jue 26/11)
-{ const p = ["T01 escalera pata", "C07", "C08"], q = ["E06", ...VG.h6], nu = ["T01 escalera nucleo"];
+{ const p = ["T01 escalera pata", "C07", "C08"], q = ["E06", ...VG.h6], nu = ["T01 escalera nucleo", "C09", "C09A"];   // C09 y C09A no llegaron el viernes 20/11
 push({ fl:110, k:3, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"steel"}, vert:vday(110, nu), slab:{1:"form"}, lvl:vB(110), o45:m3of(nu), o35:0, what:lst(nu),
   tasks:[["steel","Losa N110 S3: herrería (7 h)"], ["form","Losa N111 S1: arranca el encofrado (los pilares de S1 ya están)"], pv(nu, " sobre la losa S2")] });
 push({ fl:110, k:4, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"pour"}, vert:vday(110, p), slab:{1:"form"}, lvl:`Losa N110 S3 + ${vB(110)}`, o45:m3of(p), o35:45.3,
