@@ -216,7 +216,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.6</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.7</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -371,9 +371,12 @@ push({ fl:110, k:4, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"pour
   what:`Losa N110 S3 + ${lst(p)}`, tasks:[["form","Losa N111 S1: terminar el encofrado"], ["pour","17 h: llenar losa N110 Sector 3 con bomba"], pv(p, " (la losa va por cañería)")] });
 push({ fl:110, k:5, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, q), slab:{1:"steel",2:"form"}, lvl:vB(110), o45:m3of(q), o35:0, what:lst(q),
   tasks:[["steel","Losa N111 S1: herrería (7 h)"], ["form","Losa N111 S2: encofrado y escalera"], pv(q, " (E06 y E05 juntos con el molde extra)")] }); }
+// jue 26/11: paro del SUNCA en las hormigoneras, no hay hormigón; la losa N111 S1 pasa al vie 27/11
+push({ fl:111, k:-1, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, []), slab:{1:"steel",2:"form"}, lvl:"Losa N111", o45:0, o35:0,
+  tasks:[["nopour","Paro SUNCA de hormigones: sin hormigón"], ["steel","Losa N111 S1: repasar la herrería"], ["form","Losa N111 S2: encofrado y escalera"], REC] });
 e0(111, VG.h0); cicloNormal(111); e0(112, VG.h0); cicloNormal(112);
 // mié 16/12: día de margen para que N113 quede 17, 18 y 21/12 y el 22/12 siga siendo de limpieza
-push({ fl:113, k:-1, upN:113, baseN:112, vfl:112, base:{}, vert:vday(112, []), slab:{1:"steel",2:"form"}, lvl:"Losa N113", o45:0, o35:0,
+if (WDAYS[WI] === "2026-12-16") push({ fl:113, k:-1, upN:113, baseN:112, vfl:112, base:{}, vert:vday(112, []), slab:{1:"steel",2:"form"}, lvl:"Losa N113", o45:0, o35:0,
   tasks:[["nopour","Día de margen: sin llenado"], ["steel","Losa N113 S1: repasar la herrería"], ["form","Losa N113 S2: encofrado y escalera"], REC] });
 e0(113, VG.h0);
 // N113 comprimida antes de la licencia: S1 jue 17/12, S2 vie 18/12, S3 lun 21/12; mar 22/12 limpieza
