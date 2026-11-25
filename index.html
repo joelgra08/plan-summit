@@ -375,7 +375,8 @@ push({ fl:110, k:5, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, q), sla
 // jue 26/11: paro del SUNCA en las hormigoneras, no hay hormigón; la losa N111 S1 pasa al vie 27/11
 push({ fl:111, k:-1, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, []), slab:{1:"steel",2:"form"}, lvl:"Losa N111", o45:0, o35:0,
   tasks:[["nopour","Paro SUNCA de hormigones: sin hormigón"], ["steel","Losa N111 S1: repasar la herrería"], ["form","Losa N111 S2: encofrado y escalera"], REC] });
-e0(111, ["E05", ...VG.h0]);   // vie 27/11: decidido en obra, E05 con T04 cicloNormal(111); e0(112, VG.h0); cicloNormal(112);
+// vie 27/11: decidido en obra, E05 con T04
+e0(111, ["E05", ...VG.h0]); cicloNormal(111); e0(112, VG.h0); cicloNormal(112);
 // mié 16/12: día de margen para que N113 quede 17, 18 y 21/12 y el 22/12 siga siendo de limpieza
 if (WDAYS[WI] === "2026-12-16") push({ fl:113, k:-1, upN:113, baseN:112, vfl:112, base:{}, vert:vday(112, []), slab:{1:"steel",2:"form"}, lvl:"Losa N113", o45:0, o35:0,
   tasks:[["nopour","Día de margen: sin llenado"], ["steel","Losa N113 S1: repasar la herrería"], ["form","Losa N113 S2: encofrado y escalera"], REC] });
