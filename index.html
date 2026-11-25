@@ -216,7 +216,7 @@ details.sup .notes{margin-top:10px}
     <li>Todos los pisos con la planta tipo; los retranqueos se ajustan después. Entre niveles, 2,88 m. Los m³ son los de la app, sin desperdicio; la escalera (1,8 m³) va con la losa S2.</li>
   </ul>
 </details>
-<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.10</footer>
+<footer class="footer-note">Desarrollado por <a href="https://www.linkedin.com/in/joelgra/" target="_blank" rel="noopener noreferrer">Graña Zeballos Reiner Joel</a>. RUT 100811800012. DECC ©. Versión 1.5.11</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -364,7 +364,7 @@ push({ fl:110, k:1, upN:111, baseN:110, vfl:110, base:{1:"done",2:"pour",3:"form
 push({ fl:110, k:2, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"form"}, vert:vday(110, v20), slab:{1:"formPart"}, lvl:vB(110), o45:m3of(v20), o35:0, what:lst(v20),
   tasks:[["form","Losa N110 S3: terminar el encofrado"], ["form","Losa N111 S1: arranca la tapada parcial"], REC, pv(v20, " (decidido en obra)")] }); }
 // acordado el 19/11: el núcleo pasa al lunes; E06 y E05 juntos (molde chico extra); losa N111 S1 un día antes (jue 26/11)
-{ const p = ["T01 escalera nucleo"], q = ["T01 escalera pata", "E06", ...VG.h6.filter(c => c !== "E05")],   // E05 pasa al vie 27/11 con T04
+{ const p = ["T01 escalera nucleo"], q = ["E06", ...VG.h6.filter(c => c !== "E05")],   // E05 pasa al vie 27/11 con T04
   nu = ["C09", "C09A", "C07", "C08"];   // lun 23/11: C07 y C08 se adelantan; el núcleo va con la losa S3 y la pata el miércoles   // C09 y C09A no llegaron el viernes 20/11
 push({ fl:110, k:3, upN:111, baseN:110, vfl:110, base:{1:"done",2:"done",3:"steel"}, vert:vday(110, nu), slab:{1:"form"}, lvl:vB(110), o45:m3of(nu), o35:0, what:lst(nu),
   tasks:[["steel","Losa N110 S3: herrería (7 h)"], ["form","Losa N111 S1: arranca el encofrado (los pilares de S1 ya están)"], pv(nu, " sobre la losa S2")] });
@@ -375,8 +375,8 @@ push({ fl:110, k:5, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, q), sla
 // jue 26/11: paro del SUNCA en las hormigoneras, no hay hormigón; la losa N111 S1 pasa al vie 27/11
 push({ fl:111, k:-1, upN:111, baseN:110, vfl:110, base:{}, vert:vday(110, []), slab:{1:"steel",2:"form"}, lvl:"Losa N111", o45:0, o35:0,
   tasks:[["nopour","Paro SUNCA de hormigones: sin hormigón"], ["steel","Losa N111 S1: repasar la herrería"], ["form","Losa N111 S2: encofrado y escalera"], REC] });
-// vie 27/11: decidido en obra, E05 con T04
-e0(111, ["E05", ...VG.h0]); cicloNormal(111); e0(112, VG.h0); cicloNormal(112);
+// vie 27/11: decidido en obra, E05 y la pata con T04
+e0(111, ["E05", "T01 escalera pata", ...VG.h0]); cicloNormal(111); e0(112, VG.h0); cicloNormal(112);
 // mié 16/12: día de margen para que N113 quede 17, 18 y 21/12 y el 22/12 siga siendo de limpieza
 if (WDAYS[WI] === "2026-12-16") push({ fl:113, k:-1, upN:113, baseN:112, vfl:112, base:{}, vert:vday(112, []), slab:{1:"steel",2:"form"}, lvl:"Losa N113", o45:0, o35:0,
   tasks:[["nopour","Día de margen: sin llenado"], ["steel","Losa N113 S1: repasar la herrería"], ["form","Losa N113 S2: encofrado y escalera"], REC] });
